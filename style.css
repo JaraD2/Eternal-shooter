@@ -1,0 +1,154 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;304&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+* {
+  box-sizing: border-box;
+  font-family: "Press Start 2P", cursive;
+}
+body {
+  background-color: black;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  height: 100dvh;
+  width: 100dvw;
+}
+canvas {
+  background-color: grey;
+}
+.HUD {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 100dvw;
+  height: auto;
+  font-weight: 900;
+}
+.HUD > .expBar {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.level {
+  font-size: 2rem;
+  color: white;
+}
+progress {
+  margin-top: 10px;
+  width: 98%;
+  height: 40px;
+  appearance: none; /* Remove default styling in some browsers */
+}
+
+/* Styling for the progress value */
+progress::-webkit-progress-bar {
+  background-color: #252424; /* Background color of the progress bar */
+}
+
+progress::-webkit-progress-value {
+  background-color: #0d59cc; /* Color of the progress indicator */
+  transition: width 0.5s ease; /* Smooth transition for the width property */
+}
+
+#lives {
+  padding-left: 3px;
+  display: flex;
+  align-items: center;
+}
+
+#lives > img {
+  width: 48px;
+  margin-right: 5px;
+}
+
+.row {
+  display: grid;
+  margin-top: -10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.row > .timer,
+.level {
+  color: white;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.gameOver {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  place-items: center;
+}
+.gameOver > .card {
+  background-color: rgb(61, 61, 61);
+  border: #0d59cc solid 5px;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 25px;
+  display: grid;
+  place-items: center;
+  animation: card 0.5s ease-in-out;
+}
+.card > button {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #0d59cc;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.card > button:hover {
+  background-color: #0d59cc;
+  opacity: 0.8;
+  scale: 1.1;
+}
+/* animation of .card */
+@keyframes card {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: grid;
+}
+.background > .upgrades {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  place-content: center;
+  column-gap: 50px;
+}
+.upgrades > .upgrade {
+  background-color: #252424;
+  color: white;
+  border: #0d59cc solid 5px;
+  border-radius: 5px;
+  height: 200px;
+  width: 200px;
+  display: grid;
+  place-content: center;
+}
