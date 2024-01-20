@@ -231,7 +231,7 @@ function addLife() {
 upgrades = {
   // TODO
   fireRate: function () {
-    bullet.fireRate -= 100;
+    player.fireRate -= 100;
   }
 };
 
