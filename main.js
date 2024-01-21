@@ -17,10 +17,9 @@ console.log(`
 #   h:::::h     h:::::h e::::::::e           l::::l  l::::l  o:::::ooooo:::::o
 #   h:::::h     h:::::h  e::::::::eeeeeeee   l::::l  l::::l  o:::::::::::::::o
 #   h:::::h     h:::::h   ee:::::::::::::e   l::::l  l::::l   oo:::::::::::oo 
-#   hhhhhhh     hhhhhhh     eeeeeeeeeeeeee   llllll  llllll     ooooooooooo   `)
+#   hhhhhhh     hhhhhhh     eeeeeeeeeeeeee   llllll  llllll     ooooooooooo   `);
 
 // TODO add console explanation for cheats and logging
-
 
 // cheats
 const invulnerability = false;
@@ -30,8 +29,8 @@ const invulnerability = false;
 // }
 
 var game = {
-  paused: true,
-}
+  paused: false,
+};
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -41,12 +40,11 @@ canvasHeight = canvas.height;
 // TODO endgame statistics
 var collisions = 0;
 
-
-
 function draw(posX, posY, width, height, color) {
   ctx.fillStyle = color;
   ctx.fillRect(posX, posY, width, height);
 }
+
 
 class Player {
   constructor(posX, posY, width, height, color) {
@@ -66,7 +64,6 @@ class Player {
       s: false,
       d: false,
       " ": false,
-      
     };
     this.level = 1;
 
@@ -82,6 +79,9 @@ class Player {
   }
 
   position() {
+    if (this.keys["q"]) {
+      upgrades[1]();
+    }
     if (this.keys["m"]) {
       // just for debugging
       console.log(`player.posX: ${this.posX}`);
@@ -223,17 +223,26 @@ function removeLife() {
       location.reload();
     });
   }
-  lives[player.lives].remove();
+  lives[lives.length - 1].remove();
 }
-function addLife() {
-  // TODO as an upgrade choice
-}
-upgrades = {
+
+upgrades = [
   // TODO
-  fireRate: function () {
+  function fireRate() {
     player.fireRate -= 100;
-  }
-};
+  },
+  function addLife() {
+    // TODO as an upgrade choice
+    var lives = document.getElementById("lives");
+    const img = document.createElement("img");
+    img.src = "./resources/images/heart2.png";
+    img.alt = "";
+
+    // Add the new img element to the first child of the "lives" container
+    lives.appendChild(img);
+    player.lives++;
+  },
+];
 
 var player = new Player();
 
@@ -349,25 +358,25 @@ function createEnemy() {
   enemies.push(new Enemy(EnemyX, EnemyY, 48, 48));
   lastSpawnTime = Date.now(); // lower is faster
 }
-var time = 0
+var time = 0;
 var start = Date.now();
 const timer = setInterval(() => {
   diff = Date.now() - start;
-  document.getElementById("timer").innerText = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
+  document.getElementById("timer").innerText = `${Math.floor(diff / 60000)}:${
+    Math.floor(diff / 1000) % 60
+  }`;
   time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
 }, 1000);
 
-
 update();
 function update() {
-  if (player.lives <= 0 && !invulnerability && game.paused) return;
+  if (player.lives <= 0 || invulnerability || game.paused) return;
   requestAnimationFrame(update);
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
   // Translate the canvas based on the player's position
-  transformX = -player.posX + canvasWidth / 2;
-  transformY = -player.posY + canvasHeight / 2;
-  ctx.setTransform(1, 0, 0, 1, transformX, transformY);
+  // transformX = -player.posX + canvasWidth / 2;
+  // transformY = -player.posY + canvasHeight / 2;
+  // ctx.setTransform(1, 0, 0, 1, transformX, transformY);
 
   // if firing shoot
   if (player.firing) {
@@ -388,7 +397,7 @@ function update() {
       bullet.posY >= 0 &&
       bullet.posY <= canvasHeight
   );
-// check each object for a collision with player and moves back player
+  // check each object for a collision with player and moves back player
   obstacles.forEach((obstacle) => {
     obstacle.draw();
     if (obstacle.collidesWith(player) === true) {
@@ -406,7 +415,7 @@ function update() {
       console.log(collisions);
     }
   });
-// check each enemy for a collision with player and moves back the player and enemies
+  // check each enemy for a collision with player and moves back the player and enemies
   enemies.forEach((enemy) => {
     enemy.draw();
     if (enemy.collidesWith(player) === true) {
@@ -438,7 +447,7 @@ function update() {
       console.log(collisions);
     }
   });
-// check if the the bullet collided with a enemy and remove the enemy 
+  // check if the the bullet collided with a enemy and remove the enemy
   player.bullets.forEach((bullet) => {
     enemies.forEach((enemy) => {
       if (
@@ -449,34 +458,41 @@ function update() {
       ) {
         enemies.splice(enemies.indexOf(enemy), 1);
         player.bullets.splice(player.bullets.indexOf(bullet), 1);
-        const expBar = document.getElementById("expBar")
+        const expBar = document.getElementById("expBar");
         expBar.value = expBar.value + enemy.expValue;
         if (expBar.value == expBar.max) {
-          console.log("expbar full")
+          console.log("expbar full");
           // TODO upgrades
-          player.level++
-          document.getElementById("level").innerText = player.level
+          player.level++;
+          document.getElementById("level").innerText = player.level;
           expBar.value = 0;
           expBar.max += 10;
 
-          upgrades.fireRate();
+          // upgrades.fireRate();
+          ChooseUpgrade();
         }
       }
     });
   });
 
-  
   draw(lastMouseX, lastMouseY, 20, 20, "red");
 
-  
   createEnemy();
   // not able to use Enemy.createEnemy because there is no instence of Enemy available at the start
   moveTowardsPlayer();
-  
+
   player.position();
   player.draw();
 
   aim(lastMouseX, lastMouseY);
+}
+
+function ChooseUpgrade() {
+  game.paused = true;
+  // document.getElementById("background").style.display = "grid";
+  // forEach(x in upgrades)
+  upgrades[1]();
+  game.paused = false;
 }
 
 document.addEventListener("keydown", function (e) {
@@ -490,10 +506,10 @@ var lastMouseY = 0;
 document.addEventListener("mousemove", function (e) {
   lastMouseX = e.clientX;
   // console.log(lastMouseX);
-  var rect = canvas.getBoundingClientRect();
+  // var rect = canvas.getBoundingClientRect();
   lastMouseY = e.clientY;
-  lastMouseX -= rect.left - (-player.posX + canvasWidth / 2);
-  lastMouseY -= rect.top - (-player.posY + canvasHeight / 2);
+  // lastMouseX -= rect.left - (-player.posX + canvasWidth / 2);
+  // lastMouseY -= rect.top - (-player.posY + canvasHeight / 2);
 });
 function aim(lastMouseX, lastMouseY) {
   var angle = Math.atan2(lastMouseY - player.posY, lastMouseX - player.posX);

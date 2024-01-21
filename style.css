@@ -134,7 +134,7 @@ progress::-webkit-progress-value {
   height: 100dvh;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 100;
-  display: grid;
+  display: none;
 }
 .background > .upgrades {
   display: grid;
