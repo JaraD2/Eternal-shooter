@@ -19,18 +19,9 @@ console.log(`
 #   h:::::h     h:::::h   ee:::::::::::::e   l::::l  l::::l   oo:::::::::::oo 
 #   hhhhhhh     hhhhhhh     eeeeeeeeeeeeee   llllll  llllll     ooooooooooo   `);
 
-// TODO add console explanation for cheats and logging
-
-// cheats
-
-// if (player.keys["1"]) {
-//   // add lives
-//   player.lives += 1;
-// }
-
 const game = {
   paused: false,
-  invulnerability: true,
+  invulnerability: false,
 };
 
 canvas.width = window.innerWidth;
@@ -79,9 +70,6 @@ class Player {
   }
 
   position() {
-    if (this.keys["q"]) {
-      upgrades[1]();
-    }
     if (this.keys["m"]) {
       // just for debugging
       console.log(`player.posX: ${this.posX}`);
@@ -193,9 +181,9 @@ class Bullet {
     this.posY = posY;
     this.speed = 15;
     this.angle = angle;
-    this.width = 5;
-    this.height = 5;
-    this.color = "black";
+    this.width = 10;
+    this.height = 10;
+    this.color = "green";
   }
   move() {
     this.posX += this.speed * Math.cos(this.angle);
@@ -317,10 +305,7 @@ class Enemy {
   draw() {
     draw(this.posX, this.posY, this.width, this.height, this.color);
   }
-  moveTowardsPlayer() {
-    // TODO
-    moveTowardsPlayer();
-  }
+
   collidesWith(player) {
     return (
       this.posX <= player.posX + player.width / 2 &&
@@ -372,7 +357,7 @@ function createEnemy() {
 }
 var time = 0;
 var start = Date.now();
-const timer = setInterval(() => {
+var timer = setInterval(() => {
   diff = Date.now() - start;
   document.getElementById("timer").innerText = `${Math.floor(diff / 60000)}:${
     Math.floor(diff / 1000) % 60
@@ -391,10 +376,8 @@ function update() {
   // ctx.setTransform(1, 0, 0, 1, transformX, transformY);
 
   // if firing shoot
-  if (player.firing) {
-    player.shoot();
-    console.log("bang");
-  }
+  if (player.firing) player.shoot();
+  
   // draw and move bullets
   player.bullets.forEach((bullet) => {
     bullet.move();
@@ -460,6 +443,7 @@ function update() {
     }
   });
   // check if the the bullet collided with a enemy and remove the enemy
+  // also remove the bullet if it hits a enemy or obstacle
   player.bullets.forEach((bullet) => {
     enemies.forEach((enemy) => {
       if (
@@ -512,7 +496,9 @@ function update() {
 function ChooseUpgrade() {
   game.paused = true;
   document.getElementById("background").style.display = "grid";
+  document.getElementById("upgrades").style.display = "grid";
   var upgrade1 = document.getElementsByClassName("upgrade")[0].children;
+
 
   console.log(upgrade1);
   upgrade1[0].innerText = upgrades.fireRate.name;
@@ -534,6 +520,27 @@ function closeMenu() {
 }
 document.addEventListener("keydown", function (e) {
   player.keys[e.key] = true;
+  if (e.key === "Escape") {
+    game.paused = !game.paused;
+    if (game.paused) {
+      document.getElementById("background").style.display = "grid";
+      document.getElementById("pauseMenu").style.display = "grid";
+      clearInterval(timer);
+    } else {
+      document.getElementById("background").style.display = "none";
+      document.getElementById("pauseMenu").style.display = "none";
+      timer = setInterval(() => {
+        diff = Date.now() - start;
+        document.getElementById("timer").innerText = `${Math.floor(
+          diff / 60000
+        )}:${Math.floor(diff / 1000) % 60}`;
+        time = `${Math.floor(diff / 60000)}:${Math.floor(
+          diff / 1000
+        ) % 60}`;
+      }, 1000);
+      update();
+    }
+  }
 });
 document.addEventListener("keyup", function (e) {
   player.keys[e.key] = false;

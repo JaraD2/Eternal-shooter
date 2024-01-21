@@ -15,7 +15,7 @@ body {
   width: 100dvw;
 }
 canvas {
-  background-color: grey;
+  background-color: rgb(30, 30, 30);
 }
 .HUD {
   position: absolute;
@@ -98,7 +98,7 @@ progress::-webkit-progress-value {
   place-items: center;
   animation: card 0.5s ease-in-out;
 }
-.card > button {
+button {
   padding: 10px;
   border-radius: 5px;
   border: none;
@@ -108,7 +108,7 @@ progress::-webkit-progress-value {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
-.card > button:hover {
+button:hover {
   background-color: #0d59cc;
   opacity: 0.8;
   scale: 1.1;
@@ -137,7 +137,7 @@ progress::-webkit-progress-value {
   display: none;
 }
 .background > .upgrades {
-  display: grid;
+  display: none;
   grid-template-columns: auto auto auto;
   place-content: center;
   column-gap: 50px;
@@ -147,8 +147,37 @@ progress::-webkit-progress-value {
   color: white;
   border: #0d59cc solid 5px;
   border-radius: 5px;
-  height: 200px;
-  width: 200px;
+  height: 400px;
+  width: 400px;
   display: grid;
-  place-content: center;
+  place-items: center;
+  text-align: center;
+}
+.pauseMenu {
+  display: grid;
+  place-items: center;
+}
+.pauseMenu > .card {
+  background-color: rgb(61, 61, 61);
+  border: #0d59cc solid 5px;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 25px;
+  display: grid;
+  place-items: center;
+  animation: card 0.5s ease-in-out;
+}
+.pauseMenu > .card > button {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #0d59cc;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.pauseMenu > .card > button:not(:first-child) {
+  margin-top: 20px;
 }
