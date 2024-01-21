@@ -22,14 +22,15 @@ console.log(`
 // TODO add console explanation for cheats and logging
 
 // cheats
-const invulnerability = false;
+
 // if (player.keys["1"]) {
 //   // add lives
 //   player.lives += 1;
 // }
 
-var game = {
+const game = {
   paused: false,
+  invulnerability: true,
 };
 
 canvas.width = window.innerWidth;
@@ -44,7 +45,6 @@ function draw(posX, posY, width, height, color) {
   ctx.fillStyle = color;
   ctx.fillRect(posX, posY, width, height);
 }
-
 
 class Player {
   constructor(posX, posY, width, height, color) {
@@ -226,23 +226,35 @@ function removeLife() {
   lives[lives.length - 1].remove();
 }
 
-upgrades = [
+upgrades = {
   // TODO
-  function fireRate() {
-    player.fireRate -= 100;
+  fireRate: {
+    name: "FireRate increase",
+    disc: "increase the fire rate of your gun",
+    effect: function () {
+      player.fireRate -= 100;
+      console.log(player.fireRate);
+      closeMenu();
+    },
   },
-  function addLife() {
-    // TODO as an upgrade choice
-    var lives = document.getElementById("lives");
-    const img = document.createElement("img");
-    img.src = "./resources/images/heart2.png";
-    img.alt = "";
+  addLife: {
+    name: "Add life",
+    disc: "add a life",
+    effect: function () {
+      // TODO as an upgrade choice
+      var lives = document.getElementById("lives");
+      const img = document.createElement("img");
+      img.src = "./resources/images/heart2.png";
+      img.alt = "";
 
-    // Add the new img element to the first child of the "lives" container
-    lives.appendChild(img);
-    player.lives++;
+      // Add the new img element to the first child of the "lives" container
+      lives.appendChild(img);
+      player.lives++;
+      closeMenu();
+
+    },
   },
-];
+};
 
 var player = new Player();
 
@@ -370,7 +382,7 @@ const timer = setInterval(() => {
 
 update();
 function update() {
-  if (player.lives <= 0 || invulnerability || game.paused) return;
+  if (player.lives <= 0 || game.paused) return;
   requestAnimationFrame(update);
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   // Translate the canvas based on the player's position
@@ -408,7 +420,7 @@ function update() {
       player.keys["w"] = false;
       player.keys["s"] = false;
       collisions++;
-      if (!invulnerability) {
+      if (!game.invulnerability) {
         player.lives--;
         removeLife();
       }
@@ -440,7 +452,7 @@ function update() {
         enemy.posY += moveback;
       }
       collisions++;
-      if (!invulnerability) {
+      if (!game.invulnerability) {
         player.lives--;
         removeLife();
       }
@@ -473,6 +485,16 @@ function update() {
         }
       }
     });
+    obstacles.forEach((obstacle) => {
+      if (
+        bullet.posX >= obstacle.posX &&
+        bullet.posX <= obstacle.posX + obstacle.width &&
+        bullet.posY >= obstacle.posY &&
+        bullet.posY <= obstacle.posY + obstacle.height
+      ) {
+        player.bullets.splice(player.bullets.indexOf(bullet), 1);
+      }
+    });
   });
 
   draw(lastMouseX, lastMouseY, 20, 20, "red");
@@ -489,12 +511,27 @@ function update() {
 
 function ChooseUpgrade() {
   game.paused = true;
-  // document.getElementById("background").style.display = "grid";
-  // forEach(x in upgrades)
-  upgrades[1]();
-  game.paused = false;
-}
+  document.getElementById("background").style.display = "grid";
+  var upgrade1 = document.getElementsByClassName("upgrade")[0].children;
 
+  console.log(upgrade1);
+  upgrade1[0].innerText = upgrades.fireRate.name;
+  upgrade1[1].innerText = upgrades.fireRate.disc;
+  upgrade1[2].onclick = upgrades.fireRate.effect; // Assign the function reference to onclick
+
+  console.log(chooseRandomUpgrade());
+  function chooseRandomUpgrade() {
+    const keys = Object.keys(upgrades);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    console.log(randomKey);
+    return randomKey;
+  }
+}
+function closeMenu() {
+  document.getElementById("background").style.display = "none";
+  game.paused = false;
+  update();
+}
 document.addEventListener("keydown", function (e) {
   player.keys[e.key] = true;
 });
