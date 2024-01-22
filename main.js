@@ -349,8 +349,7 @@ function createEnemy() {
     EnemyX <= player.posX + player.width + nonoZone &&
     EnemyY >= player.posY - player.height - nonoZone &&
     EnemyY <= player.posY + player.height + nonoZone
-  )
-    return;
+  ) return;
   enemies.push(new Enemy(EnemyX, EnemyY, 48, 48));
   lastSpawnTime = Date.now(); // lower is faster
 }
@@ -375,7 +374,9 @@ function update() {
   // ctx.setTransform(1, 0, 0, 1, transformX, transformY);
 
   // if firing shoot
-  if (player.firing) player.shoot();
+  if (player.firing) {
+    player.shoot();
+  };
 
   // draw and move bullets
   player.bullets.forEach((bullet) => {
@@ -508,7 +509,6 @@ function ChooseUpgrade() {
   function chooseRandomUpgrade() {
     const keys = Object.keys(upgrades);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
-    console.log(randomKey);
     return randomKey;
   }
 }
@@ -536,7 +536,6 @@ document.addEventListener("keydown", function (e) {
         )}:${Math.floor(diff / 1000) % 60}`;
         time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
       }, 1000);
-      update();
     }
   }
 });
