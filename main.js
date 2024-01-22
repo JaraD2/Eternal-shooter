@@ -36,6 +36,18 @@ function draw(posX, posY, width, height, color) {
   ctx.fillStyle = color;
   ctx.fillRect(posX, posY, width, height);
 }
+function drawTexture(posX, posY, width, height, texture) {
+  ctx.drawImage(texture, posX, posY, width, height);
+}
+function loadimage(url) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      resolve(image);
+    };
+    image.src = url;
+  });
+}
 
 class Player {
   constructor(posX, posY, width, height, color) {
@@ -246,16 +258,18 @@ upgrades = {
 var player = new Player();
 
 class Obstacle {
-  constructor(posX, posY, width, height, color) {
+  constructor(posX, posY, width, height, texture) {
     this.posX = posX;
     this.posY = posY;
     this.width = width;
     this.height = height;
-    this.color = color;
+    this.texture = texture;
   }
+
   draw() {
-    draw(this.posX, this.posY, this.width, this.height, this.color);
+    drawTexture(this.posX, this.posY, this.width, this.height, this.texture);
   }
+
   collidesWith(player) {
     return (
       this.posX <= player.posX + player.width / 2 &&
@@ -265,30 +279,48 @@ class Obstacle {
     );
   }
 }
-const borderWidth = 10000;
-// TODO make a function that draws a bunch of obstacles
-const obstacles = [
-  new Obstacle(100, 100, 256, 256, "pink"),
-  new Obstacle(400, 300, 256, 256, "pink"),
 
-  // border obstacles
-  new Obstacle(
-    -borderWidth,
-    -borderWidth,
-    canvasWidth + 2 * borderWidth,
-    borderWidth,
-    "black"
-  ), // Top border
-  new Obstacle(
-    -borderWidth,
-    canvasHeight,
-    canvasWidth + 2 * borderWidth,
-    borderWidth,
-    "black"
-  ), // Bottom border
-  new Obstacle(-borderWidth, 0, borderWidth, canvasHeight, "black"), // Left border
-  new Obstacle(canvasWidth, 0, borderWidth, canvasHeight, "black"), // Right border
-];
+const borderWidth = 10000;
+const obstacles = [];
+
+function loadObstacles() {
+  loadimage("./resources/images/ruin.png").then((image) => {
+    obstacles.push(
+      new Obstacle(100, 100, 96, 82, image),
+      new Obstacle(400, 300, 96, 82, image)
+    );
+  });
+  // border
+  loadimage("./resources/images/black-pixel.png").then((blackBorderImage) => {
+    // border obstacles
+    obstacles.push(
+      new Obstacle(
+        -borderWidth,
+        -borderWidth,
+        canvasWidth + 2 * borderWidth,
+        borderWidth,
+        blackBorderImage
+      ), // Top border
+      new Obstacle(
+        -borderWidth,
+        canvasHeight,
+        canvasWidth + 2 * borderWidth,
+        borderWidth,
+        blackBorderImage
+      ), // Bottom border
+      new Obstacle(
+        -borderWidth,
+        0,
+        borderWidth,
+        canvasHeight,
+        blackBorderImage
+      ), // Left border
+      new Obstacle(canvasWidth, 0, borderWidth, canvasHeight, blackBorderImage) // Right border
+    );
+  });
+}
+loadObstacles();
+
 class Enemy {
   constructor(posX, posY, width, height, color) {
     this.posX = posX;
@@ -349,7 +381,8 @@ function createEnemy() {
     EnemyX <= player.posX + player.width + nonoZone &&
     EnemyY >= player.posY - player.height - nonoZone &&
     EnemyY <= player.posY + player.height + nonoZone
-  ) return;
+  )
+    return;
   enemies.push(new Enemy(EnemyX, EnemyY, 48, 48));
   lastSpawnTime = Date.now(); // lower is faster
 }
@@ -376,7 +409,7 @@ function update() {
   // if firing shoot
   if (player.firing) {
     player.shoot();
-  };
+  }
 
   // draw and move bullets
   player.bullets.forEach((bullet) => {
