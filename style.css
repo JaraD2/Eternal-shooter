@@ -109,7 +109,6 @@ progress::-webkit-progress-value {
   border: var(--card-border-color) solid 5px;
   color: white;
   padding: 20px;
-  border-radius: 10px;
   font-size: 25px;
   display: grid;
   place-items: center;
@@ -118,7 +117,6 @@ progress::-webkit-progress-value {
 
 button {
   padding: 10px;
-  border-radius: 5px;
   border: none;
   background-color: var(--button-background-color);
   color: var(--button-color);
@@ -168,7 +166,6 @@ button:hover {
   background-color: #252424;
   color: white;
   border: var(--card-border-color) solid 5px;
-  border-radius: 5px;
   height: 400px;
   width: 400px;
   display: grid;
@@ -186,7 +183,6 @@ button:hover {
   border: var(--card-border-color) solid 5px;
   color: white;
   padding: 20px;
-  border-radius: 10px;
   font-size: 25px;
   display: grid;
   place-items: center;
@@ -195,7 +191,6 @@ button:hover {
 
 .pauseMenu > .card > button {
   padding: 10px;
-  border-radius: 5px;
   border: none;
   background-color: var(--button-background-color);
   color: var(--button-color);
