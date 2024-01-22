@@ -328,8 +328,6 @@ class Enemy {
     this.width = width;
     this.height = height;
     this.color = color || "green";
-    this.lastSpawnTime = 0;
-    this.spawnRate = 1; // in milliseconds
     this.expValue = 1;
   }
 
@@ -388,6 +386,7 @@ function createEnemy() {
 }
 var time = 0;
 var start = Date.now();
+console.log(start);
 var timer = setInterval(() => {
   diff = Date.now() - start;
   document.getElementById("timer").innerText = `${Math.floor(diff / 60000)}:${
@@ -530,6 +529,7 @@ function ChooseUpgrade() {
   game.paused = true;
   document.getElementById("background").style.display = "grid";
   document.getElementById("upgrades").style.display = "grid";
+  spawnRate -= 100;
 
   for (let i = 0; i < 3; i++) {
     var upgrade = document.getElementsByClassName("upgrade")[i].children;
@@ -570,6 +570,14 @@ document.addEventListener("keydown", function (e) {
         time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
       }, 1000);
     }
+  }
+  if (e.key === "+") {
+    player.level++;
+    document.getElementById("level").innerText = player.level;
+    expBar.value = 0;
+    expBar.max += 10;
+
+    ChooseUpgrade();
   }
 });
 document.addEventListener("keyup", function (e) {
