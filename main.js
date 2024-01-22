@@ -496,14 +496,15 @@ function ChooseUpgrade() {
   game.paused = true;
   document.getElementById("background").style.display = "grid";
   document.getElementById("upgrades").style.display = "grid";
-  var upgrade1 = document.getElementsByClassName("upgrade")[0].children;
 
-  console.log(upgrade1);
-  upgrade1[0].innerText = upgrades.fireRate.name;
-  upgrade1[1].innerText = upgrades.fireRate.disc;
-  upgrade1[2].onclick = upgrades.fireRate.effect; // Assign the function reference to onclick
+  for (let i = 0; i < 3; i++) {
+    var upgrade = document.getElementsByClassName("upgrade")[i].children;
+    let randomUpgrade = chooseRandomUpgrade();
+    upgrade[0].innerText = upgrades[randomUpgrade].name;
+    upgrade[1].innerText = upgrades[randomUpgrade].disc;
+    upgrade[2].onclick = upgrades[randomUpgrade].effect; // Assign the function reference to onclick
+  }
 
-  console.log(chooseRandomUpgrade());
   function chooseRandomUpgrade() {
     const keys = Object.keys(upgrades);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
