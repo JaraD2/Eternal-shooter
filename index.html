@@ -3,65 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Document</title>
+    <link rel="stylesheet" href="start.css" />
+    <title>Shooter</title>
   </head>
   <body>
-    <canvas></canvas>
-    <div class="HUD">
-      <div class="expBar">
-        <progress min="0" max="10" value="0" id="expBar"></progress>
-      </div>
-      <div class="row">
-        <div id="lives">
-          <img src="./resources/images/heart2.png" alt="" />
-          <img src="./resources/images/heart2.png" alt="" />
-          <img src="./resources/images/heart2.png" alt="" />
-        </div>
-        <div class="level">
-          <p>Level: <span id="level">1</span></p>
-        </div>
-        <div class="timer"><p id="timer">0</p></div>
-      </div>
-    </div>
-
-    <div class="gameOver" id="gameOver">
-      <div class="card">
-        <h1>Game Over</h1>
-        <p>Level: <span id="endscreenLevel">1</span></p>
-        <p>Time: <span id="endscreenTime">0</span></p>
-        <p>Collisions: <span id="endscreenCollisions">col</span></p>
-        <button id="restart">Restart</button>
-      </div>
-    </div>
-
-    <div class="background" id="background">
-      <div class="upgrades" id="upgrades">
-        <div class="upgrade">
-          <p>upgrade name</p>
-          <p>upgrade description</p>
-          <button>Continue</button>
-        </div>
-        <div class="upgrade">
-          <p>upgrade name</p>
-          <p>upgrade description</p>
-          <button>Continue</button>
-        </div>
-        <div class="upgrade">
-          <p>upgrade name</p>
-          <p>upgrade description</p>
-          <button>Continue</button>
-        </div>
-      </div>
-      <div class="pauseMenu" id="pauseMenu">
-        <div class="card">
-          <h1>Pause</h1>
-          <button id="resume">Resume</button>
-          <button id="restart">Restart</button>
-          <button id="quit">Quit</button>
-        </div>
-      </div>
-    </div>
+    <header>
+      <h1>Eternal Shooter</h1>
+    </header>
+    <main class="menu">
+      <a href="./game.html">Start</a>
+    </main>
+    <footer class="bottom">
+      <sub>Made by Jara Doornbos</sub>
+      <sub><a href="">View on GitHub</a></sub>
+    </footer>
   </body>
-  <script src="main.js"></script>
 </html>

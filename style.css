@@ -1,12 +1,23 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;304&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
+:root {
+  --background-color: black;
+  --progress-bar-background-color: #252424;
+  --progress-bar-color: rgb(255, 64, 31);
+  --card-background-color: rgb(61, 61, 61);
+  --card-border-color: rgb(247, 37, 0);
+  --button-background-color: rgb(218, 35, 3);
+  --button-color: rgb(255, 255, 255);
+}
+
 * {
   box-sizing: border-box;
   font-family: "Press Start 2P", cursive;
 }
+
 body {
-  background-color: black;
+  background-color: var(--background-color);
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -14,9 +25,11 @@ body {
   height: 100dvh;
   width: 100dvw;
 }
+
 canvas {
   background-color: rgb(30, 30, 30);
 }
+
 .HUD {
   position: absolute;
   top: 0;
@@ -26,6 +39,7 @@ canvas {
   height: auto;
   font-weight: 900;
 }
+
 .HUD > .expBar {
   width: 100%;
   display: grid;
@@ -36,6 +50,7 @@ canvas {
   font-size: 2rem;
   color: white;
 }
+
 progress {
   margin-top: 10px;
   width: 98%;
@@ -45,11 +60,11 @@ progress {
 
 /* Styling for the progress value */
 progress::-webkit-progress-bar {
-  background-color: #252424; /* Background color of the progress bar */
+  background-color: var(--progress-bar-background-color); /* Background color of the progress bar */
 }
 
 progress::-webkit-progress-value {
-  background-color: #0d59cc; /* Color of the progress indicator */
+  background-color: var(--progress-bar-color); /* Color of the progress indicator */
   transition: width 0.5s ease; /* Smooth transition for the width property */
 }
 
@@ -69,6 +84,7 @@ progress::-webkit-progress-value {
   margin-top: -10px;
   grid-template-columns: repeat(3, 1fr);
 }
+
 .row > .timer,
 .level {
   color: white;
@@ -87,9 +103,10 @@ progress::-webkit-progress-value {
   z-index: 100;
   place-items: center;
 }
+
 .gameOver > .card {
-  background-color: rgb(61, 61, 61);
-  border: #0d59cc solid 5px;
+  background-color: var(--card-background-color);
+  border: var(--card-border-color) solid 5px;
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -98,21 +115,24 @@ progress::-webkit-progress-value {
   place-items: center;
   animation: card 0.5s ease-in-out;
 }
+
 button {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #0d59cc;
-  color: white;
+  background-color: var(--button-background-color);
+  color: var(--button-color);
   font-size: 20px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
+
 button:hover {
-  background-color: #0d59cc;
+  background-color: var(--button-background-color);
   opacity: 0.8;
   scale: 1.1;
 }
+
 /* animation of .card */
 @keyframes card {
   0% {
@@ -136,16 +156,18 @@ button:hover {
   z-index: 100;
   display: none;
 }
+
 .background > .upgrades {
   display: none;
   grid-template-columns: auto auto auto;
   place-content: center;
   column-gap: 50px;
 }
+
 .upgrades > .upgrade {
   background-color: #252424;
   color: white;
-  border: #0d59cc solid 5px;
+  border: var(--card-border-color) solid 5px;
   border-radius: 5px;
   height: 400px;
   width: 400px;
@@ -153,13 +175,15 @@ button:hover {
   place-items: center;
   text-align: center;
 }
+
 .pauseMenu {
-  display: grid;
+  display: none;
   place-items: center;
 }
+
 .pauseMenu > .card {
-  background-color: rgb(61, 61, 61);
-  border: #0d59cc solid 5px;
+  background-color: var(--card-background-color);
+  border: var(--card-border-color) solid 5px;
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -168,16 +192,18 @@ button:hover {
   place-items: center;
   animation: card 0.5s ease-in-out;
 }
+
 .pauseMenu > .card > button {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #0d59cc;
-  color: white;
+  background-color: var(--button-background-color);
+  color: var(--button-color);
   font-size: 20px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
+
 .pauseMenu > .card > button:not(:first-child) {
   margin-top: 20px;
 }
