@@ -239,7 +239,6 @@ upgrades = {
       lives.appendChild(img);
       player.lives++;
       closeMenu();
-
     },
   },
 };
@@ -377,7 +376,7 @@ function update() {
 
   // if firing shoot
   if (player.firing) player.shoot();
-  
+
   // draw and move bullets
   player.bullets.forEach((bullet) => {
     bullet.move();
@@ -499,7 +498,6 @@ function ChooseUpgrade() {
   document.getElementById("upgrades").style.display = "grid";
   var upgrade1 = document.getElementsByClassName("upgrade")[0].children;
 
-
   console.log(upgrade1);
   upgrade1[0].innerText = upgrades.fireRate.name;
   upgrade1[1].innerText = upgrades.fireRate.disc;
@@ -515,6 +513,8 @@ function ChooseUpgrade() {
 }
 function closeMenu() {
   document.getElementById("background").style.display = "none";
+  document.getElementById("upgrades").style.display = "none";
+  document.getElementById("pauseMenu").style.display = "none";
   game.paused = false;
   update();
 }
@@ -527,16 +527,13 @@ document.addEventListener("keydown", function (e) {
       document.getElementById("pauseMenu").style.display = "grid";
       clearInterval(timer);
     } else {
-      document.getElementById("background").style.display = "none";
-      document.getElementById("pauseMenu").style.display = "none";
+      closeMenu();
       timer = setInterval(() => {
         diff = Date.now() - start;
         document.getElementById("timer").innerText = `${Math.floor(
           diff / 60000
         )}:${Math.floor(diff / 1000) % 60}`;
-        time = `${Math.floor(diff / 60000)}:${Math.floor(
-          diff / 1000
-        ) % 60}`;
+        time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
       }, 1000);
       update();
     }
