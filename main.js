@@ -22,6 +22,7 @@ console.log(`
 const game = {
   paused: false,
   invulnerability: false,
+  start: Date.now(),
 };
 
 canvas.width = window.innerWidth;
@@ -69,8 +70,16 @@ class Player {
       " ": false,
     };
     this.level = 1;
-
     this.firing = false;
+    this.projectilesPerShot = 8;
+    this.activeUpgrades = {
+      shootBehind: false,
+      shootingRing: {
+        active: false,
+        level: 0,
+      },
+      doubleShot: false,
+    };
     this.bullets = [];
     this.lastShotTime = 0;
     this.fireRate = 750; // lower is faster
@@ -174,16 +183,50 @@ class Player {
     if (currentTime - this.lastShotTime < this.fireRate) {
       return;
     }
+    if (player.activeUpgrades.doubleShot) {
+      // time between shots
+      const timeBetweenShots = 200;
+      setTimeout(() => {
+        shoot();
+      }, timeBetweenShots);
+    }
+    shoot();
+    function shoot() {
+      const bullet = new Bullet(
+        player.posX + player.width / 10,
+        player.posY + player.height / 10,
+        player.gunAngle
+      );
+      player.bullets.push(bullet);
 
-    const bullet = new Bullet(
-      this.posX + this.width / 10,
-      this.posY + this.height / 10,
-      this.gunAngle
-    );
-    this.bullets.push(bullet);
+      if (player.activeUpgrades.shootingRing.active) {
+        var projectilesPerShot = 4 * player.activeUpgrades.shootingRing.level;
+        // if (this.activeUpgrades.shootingRing.level == 2) {
+        //   projectilesPerShot = 8;
+        // }
+        const angleBetweenProjectiles = (2 * Math.PI) / projectilesPerShot;
+        for (let i = 1; i < projectilesPerShot; i++) {
+          const bullet = new Bullet(
+            player.posX + player.width / 10,
+            player.posY + player.height / 10,
+            player.gunAngle + i * angleBetweenProjectiles
+          );
+          player.bullets.push(bullet);
+        }
+      }
+      if (player.activeUpgrades.shootBehind) {
+        const angleBetweenProjectiles = (2 * Math.PI) / 2;
+        const bullet = new Bullet(
+          player.posX - player.width / 10,
+          player.posY - player.height / 10,
+          player.gunAngle + 1 * angleBetweenProjectiles
+        );
+        player.bullets.push(bullet);
+      }
+      console.log("shot");
+    }
 
-    this.firing = true;
-    this.lastShotTime = currentTime;
+    player.lastShotTime = currentTime;
   }
 }
 
@@ -211,7 +254,6 @@ function removeLife() {
   var lives = document.getElementById("lives").children;
   if (player.lives <= 0) {
     console.log("game over");
-    // TODO add game over screen
     document.getElementById("gameOver").style.display = "grid";
     document.getElementById("endscreenLevel").innerText = player.level;
 
@@ -227,7 +269,6 @@ function removeLife() {
 }
 
 upgrades = {
-  // TODO
   fireRate: {
     name: "FireRate increase",
     disc: "increase the fire rate of your gun",
@@ -235,6 +276,7 @@ upgrades = {
       player.fireRate -= 100;
       console.log(player.fireRate);
       closeMenu();
+      if (player.fireRate <= 300) delete upgrades.fireRate;
     },
   },
   addLife: {
@@ -251,6 +293,37 @@ upgrades = {
       lives.appendChild(img);
       player.lives++;
       closeMenu();
+    },
+  },
+  shootingRing: {
+    name: "Shooting ring",
+    disc: "shoot a ring of bullets",
+    effect: function () {
+      player.activeUpgrades.shootingRing.active = true;
+      closeMenu();
+      // delete this upgrade from the list
+      // upgrades.shootingRing = undefined;
+      player.activeUpgrades.shootingRing.level++;
+      if (player.activeUpgrades.shootingRing.level == 2)
+        delete upgrades.shootingRing;
+    },
+  },
+  shootBehind: {
+    name: "Shoot behind",
+    disc: "shoot a bullet behind you",
+    effect: function () {
+      player.activeUpgrades.shootBehind = true;
+      closeMenu();
+      delete upgrades.shootBehind;
+    },
+  },
+  doubleShot: {
+    name: "Double shot",
+    disc: "shoot two bullets at once",
+    effect: function () {
+      player.activeUpgrades.doubleShot = true;
+      closeMenu();
+      delete upgrades.doubleShot;
     },
   },
 };
@@ -385,10 +458,9 @@ function createEnemy() {
   lastSpawnTime = Date.now(); // lower is faster
 }
 var time = 0;
-var start = Date.now();
-console.log(start);
+
 var timer = setInterval(() => {
-  diff = Date.now() - start;
+  diff = Date.now() - game.start;
   document.getElementById("timer").innerText = `${Math.floor(diff / 60000)}:${
     Math.floor(diff / 1000) % 60
   }`;
@@ -553,7 +625,7 @@ function closeMenu() {
   update();
 }
 document.addEventListener("keydown", function (e) {
-  player.keys[e.key] = true;
+  player.keys[e.key.toLowerCase()] = true;
   if (e.key === "Escape") {
     game.paused = !game.paused;
     if (game.paused) {
@@ -563,7 +635,7 @@ document.addEventListener("keydown", function (e) {
     } else {
       closeMenu();
       timer = setInterval(() => {
-        diff = Date.now() - start;
+        diff = Date.now() - game.start;
         document.getElementById("timer").innerText = `${Math.floor(
           diff / 60000
         )}:${Math.floor(diff / 1000) % 60}`;
@@ -581,7 +653,7 @@ document.addEventListener("keydown", function (e) {
   }
 });
 document.addEventListener("keyup", function (e) {
-  player.keys[e.key] = false;
+  player.keys[e.key.toLowerCase()] = false;
 });
 var lastMouseX = 0;
 var lastMouseY = 0;
