@@ -60,11 +60,15 @@ progress {
 
 /* Styling for the progress value */
 progress::-webkit-progress-bar {
-  background-color: var(--progress-bar-background-color); /* Background color of the progress bar */
+  background-color: var(
+    --progress-bar-background-color
+  ); /* Background color of the progress bar */
 }
 
 progress::-webkit-progress-value {
-  background-color: var(--progress-bar-color); /* Color of the progress indicator */
+  background-color: var(
+    --progress-bar-color
+  ); /* Color of the progress indicator */
   transition: width 0.5s ease; /* Smooth transition for the width property */
 }
 
@@ -124,7 +128,10 @@ button {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
-
+button > a {
+  color: var(--button-color);
+  text-decoration: none;
+}
 button:hover {
   background-color: var(--button-background-color);
   opacity: 0.8;
