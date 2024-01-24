@@ -35,6 +35,12 @@ h1 {
     padding: 10px;
     font-size: 30px;
 }
+.menu > a:hover {
+    background-color: rgb(255, 64, 31);
+    color: black;
+
+    transition: all 0.3s ease;
+}
 
 .bottom {
     text-align: center;
@@ -52,4 +58,8 @@ sub {
 sub > a {
     color: rgb(255, 64, 31);
     text-decoration: dotted underline;
+}
+sub > a:hover {
+    color: rgb(254, 38, 0);
+    text-decoration: underline;
 }
