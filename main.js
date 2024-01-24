@@ -184,7 +184,6 @@ class Player {
       return;
     }
     if (player.activeUpgrades.doubleShot) {
-      // time between shots
       const timeBetweenShots = 200;
       setTimeout(() => {
         shoot();
@@ -201,9 +200,6 @@ class Player {
 
       if (player.activeUpgrades.shootingRing.active) {
         var projectilesPerShot = 4 * player.activeUpgrades.shootingRing.level;
-        // if (this.activeUpgrades.shootingRing.level == 2) {
-        //   projectilesPerShot = 8;
-        // }
         const angleBetweenProjectiles = (2 * Math.PI) / projectilesPerShot;
         for (let i = 1; i < projectilesPerShot; i++) {
           const bullet = new Bullet(
@@ -562,13 +558,10 @@ function update() {
         expBar.value = expBar.value + enemy.expValue;
         if (expBar.value == expBar.max) {
           console.log("expbar full");
-          // TODO upgrades
           player.level++;
           document.getElementById("level").innerText = player.level;
           expBar.value = 0;
           expBar.max += 10;
-
-          // upgrades.fireRate();
           ChooseUpgrade();
         }
       }
