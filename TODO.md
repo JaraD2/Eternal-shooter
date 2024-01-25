@@ -1,4 +1,4 @@
-## Done
+# Done
 
 - ADD player
 - ADD movement
@@ -21,12 +21,12 @@
 - ADD world border 20m
 - ADD lives 20m
 - UI for upgrades
-- ### REVIEW
+- ## REVIEW
   1.  review code
   2.  where its possible make code more general so it can be used in other projects or make it easier to understand
   3.  ADD more comments
 - ADD enemy's - time depends on collision implementation
-- ### ADD enemy's pathfinding - ?
+- ## ADD enemy's pathfinding - ?
 - make use of the html element when the next level is reached increment the this.level of the player and +10 the max value (dont forget to sync that with the progress element)
 
 ```html

@@ -1,65 +1,64 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-html, body {
-    font-family: 'Press Start 2P', system-ui;
-    background-color: black;
-    color: aliceblue;
-    height: 100dvh;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-rows: 1fr 5fr 1fr;
+html,
+body {
+  font-family: "Press Start 2P", system-ui;
+  background-color: black;
+  color: aliceblue;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: 1fr 5fr 1fr;
 }
 
 h1 {
-    font-size: 80px;
-    text-align: center;
-    color: rgb(255, 64, 31);
-
+  font-size: 80px;
+  text-align: center;
+  color: rgb(255, 64, 31);
 }
 
 .menu {
-    display: grid;
-
+  display: grid;
 }
 
 .menu > a {
-    color: aliceblue;
-    text-decoration: none;
-    border: 5px solid rgb(255, 64, 31);
-    place-self: center;
-    padding: 10px;
-    font-size: 30px;
+  color: aliceblue;
+  text-decoration: none;
+  border: 5px solid rgb(255, 64, 31);
+  place-self: center;
+  padding: 10px;
+  font-size: 30px;
 }
 .menu > a:hover {
-    background-color: rgb(255, 64, 31);
-    color: black;
+  background-color: rgb(255, 64, 31);
+  color: black;
 
-    transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .bottom {
-    text-align: center;
-    font-size: 1rem;
-    width: 100%;
-    display: grid;
-    place-self: end center;
+  text-align: center;
+  font-size: 1rem;
+  width: 100%;
+  display: grid;
+  place-self: end center;
 }
 footer {
-    padding: 10px;
+  padding: 10px;
 }
 sub {
-    font-size: 20px;
+  font-size: 20px;
 }
 sub > a {
-    color: rgb(255, 64, 31);
-    text-decoration: dotted underline;
+  color: rgb(255, 64, 31);
+  text-decoration: dotted underline;
 }
 sub > a:hover {
-    color: rgb(254, 38, 0);
-    text-decoration: underline;
+  color: rgb(254, 38, 0);
+  text-decoration: underline;
 }
