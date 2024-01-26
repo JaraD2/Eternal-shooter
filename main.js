@@ -199,7 +199,7 @@ class Player {
       player.bullets.push(bullet);
 
       if (player.activeUpgrades.shootingRing.active) {
-        var projectilesPerShot = 4 * player.activeUpgrades.shootingRing.level;
+        var projectilesPerShot = 2 * player.activeUpgrades.shootingRing.level;
         const angleBetweenProjectiles = (2 * Math.PI) / projectilesPerShot;
         for (let i = 1; i < projectilesPerShot; i++) {
           const bullet = new Bullet(
@@ -219,9 +219,7 @@ class Player {
         );
         player.bullets.push(bullet);
       }
-      console.log("shot");
     }
-
     player.lastShotTime = currentTime;
   }
 }
@@ -284,7 +282,6 @@ upgrades = {
       const img = document.createElement("img");
       img.src = "./resources/images/heart2.png";
       img.alt = "";
-
       // Add the new img element to the first child of the "lives" container
       lives.appendChild(img);
       player.lives++;
@@ -298,9 +295,8 @@ upgrades = {
       player.activeUpgrades.shootingRing.active = true;
       closeMenu();
       // delete this upgrade from the list
-      // upgrades.shootingRing = undefined;
       player.activeUpgrades.shootingRing.level++;
-      if (player.activeUpgrades.shootingRing.level == 2)
+      if (player.activeUpgrades.shootingRing.level == 3)
         delete upgrades.shootingRing;
     },
   },
@@ -391,17 +387,17 @@ function loadObstacles() {
 loadObstacles();
 
 class Enemy {
-  constructor(posX, posY, width, height, color) {
+  constructor(posX, posY, width, height, texture) {
     this.posX = posX;
     this.posY = posY;
     this.width = width;
     this.height = height;
-    this.color = color || "green";
+    this.texture = texture;
     this.expValue = 1;
   }
 
   draw() {
-    draw(this.posX, this.posY, this.width, this.height, this.color);
+    drawTexture(this.posX, this.posY, this.width, this.height, this.texture);
   }
 
   collidesWith(player) {
@@ -433,10 +429,11 @@ function moveTowardsPlayer() {
 
 var enemies = [];
 var lastSpawnTime = 0;
-var spawnRate = 1000; // in milliseconds
+var stage = 0;
+var spawnRates = [1000, 750, 500, 500, 250, 100];
 function createEnemy() {
   const now = Date.now();
-  if (now - lastSpawnTime < spawnRate) {
+  if (now - lastSpawnTime < spawnRates[stage]) {
     return;
   }
 
@@ -450,7 +447,9 @@ function createEnemy() {
     EnemyY <= player.posY + player.height + nonoZone
   )
     return;
-  enemies.push(new Enemy(EnemyX, EnemyY, 48, 48));
+  loadimage("./resources/images/enemy.png").then((image) => {
+    enemies.push(new Enemy(EnemyX, EnemyY, 42, 48, image));
+  });
   lastSpawnTime = Date.now(); // lower is faster
 }
 var time = 0;
@@ -594,7 +593,9 @@ function ChooseUpgrade() {
   game.paused = true;
   document.getElementById("background").style.display = "grid";
   document.getElementById("upgrades").style.display = "grid";
-  spawnRate -= 100;
+  if (player.level % 3 == 0) {
+    stage += 1;
+  }
 
   for (let i = 0; i < 3; i++) {
     var upgrade = document.getElementsByClassName("upgrade")[i].children;
