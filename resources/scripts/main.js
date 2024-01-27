@@ -38,7 +38,7 @@ function playSound(name) {
   switch (name) {
     case "shoot":
       audio = new Audio("resources/sound/shoot.wav");
-      audio.volume = game.audio.volume;
+      audio.volume = game.audio.volume / 2;
       audio.play();
       break;
     case "hit":
