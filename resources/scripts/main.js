@@ -6,9 +6,11 @@ const game = {
   invulnerability: false,
   start: Date.now(),
   audio: {
-    volume: 0.4,
+    soundToggled: localStorage.getItem("soundToggled") || true,
+    volume: localStorage.getItem("volume") || 0.25,
   },
 };
+
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -35,20 +37,21 @@ function loadimage(url) {
   });
 }
 function playSound(name) {
+  if (!game.audio.soundToggled) return;
   switch (name) {
     case "shoot":
       audio = new Audio("resources/sound/shoot.wav");
-      audio.volume = game.audio.volume / 2;
+      audio.volume = game.audio.volume /100;
       audio.play();
       break;
     case "hit":
       audio = new Audio("resources/sound/explosion.wav");
-      audio.volume = game.audio.volume;
+      audio.volume = game.audio.volume/100;
       audio.play();
       break;
     case "levelUp":
       audio = new Audio("resources/sound/levelup.wav");
-      audio.volume = game.audio.volume;
+      audio.volume = game.audio.volume/100;
       audio.play();
       break;
     default:

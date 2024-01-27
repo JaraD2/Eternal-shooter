@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./resources/styles/settings.css" />
+    <title>Settings</title>
+  </head>
+  <body>
+    <h1>Settings</h1>
+    <div class="container">
+      <div class="sound">
+        <h2>Sound</h2>
+        <div class="checkbox-container">
+          <input type="checkbox" name="" id="toggle" />
+          <p id="toggle-text">Off</p>
+        </div>
+
+        <div class="slider-container">
+          <div class="sound-slider">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value="50"
+              id="sound-slider"
+            />
+            <input type="number" name="" id="sound-slider-value" value="1" maxlength="3"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="back">
+       <a href="./index.html">Back</a> <!-- does not automatically save. make a popup to save -->
+       <button onclick="populateStorage()">Confirm</button>
+      <button onclick="reset()">Reset</button>
+    </div>
+    <script src="./resources/scripts/settings.js"></script>
+  </body>
+</html>
