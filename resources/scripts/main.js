@@ -1,28 +1,13 @@
 var canvas = document.querySelector("canvas");
 var ctx = canvas.getContext("2d");
 
-console.log(`
-#   hhhhhh                                   llllll  llllll             
-#   h::::h                                   l::::l  l::::l                  
-#   h::::h                                   l::::l  l::::l                  
-#   h::::h                                   l::::l  l::::l                  
-#   h::::h hhhhh            eeeeeeeeeeee     l::::l  l::::l     ooooooooooo   
-#   h::::hh:::::hhh       ee::::::::::::ee   l::::l  l::::l   oo:::::::::::oo 
-#   h::::::::::::::hh    e::::::eeeee:::::ee l::::l  l::::l  o:::::::::::::::o
-#   h:::::::hhh::::::h  e::::::e     e:::::e l::::l  l::::l  o:::::ooooo:::::o
-#   h::::::h   h::::::h e:::::::eeeee::::::e l::::l  l::::l  o::::o     o::::o
-#   h:::::h     h:::::h e:::::::::::::::::e  l::::l  l::::l  o::::o     o::::o
-#   h:::::h     h:::::h e::::::eeeeeeeeeee   l::::l  l::::l  o::::o     o::::o
-#   h:::::h     h:::::h e:::::::e            l::::l  l::::l  o::::o     o::::o
-#   h:::::h     h:::::h e::::::::e           l::::l  l::::l  o:::::ooooo:::::o
-#   h:::::h     h:::::h  e::::::::eeeeeeee   l::::l  l::::l  o:::::::::::::::o
-#   h:::::h     h:::::h   ee:::::::::::::e   l::::l  l::::l   oo:::::::::::oo 
-#   hhhhhhh     hhhhhhh     eeeeeeeeeeeeee   llllll  llllll     ooooooooooo   `);
-
 const game = {
   paused: false,
   invulnerability: false,
   start: Date.now(),
+  audio: {
+    volume: 0.4,
+  },
 };
 
 canvas.width = window.innerWidth;
@@ -48,6 +33,27 @@ function loadimage(url) {
     };
     image.src = url;
   });
+}
+function playSound(name) {
+  switch (name) {
+    case "shoot":
+      audio = new Audio("resources/sound/shoot.wav");
+      audio.volume = game.audio.volume;
+      audio.play();
+      break;
+    case "hit":
+      audio = new Audio("resources/sound/explosion.wav");
+      audio.volume = game.audio.volume;
+      audio.play();
+      break;
+    case "levelUp":
+      audio = new Audio("resources/sound/levelup.wav");
+      audio.volume = game.audio.volume;
+      audio.play();
+      break;
+    default:
+      console.error(`Sound ${name} not found`);
+  }
 }
 
 class Player {
@@ -191,6 +197,7 @@ class Player {
     }
     shoot();
     function shoot() {
+      playSound("shoot");
       const bullet = new Bullet(
         player.posX + player.width / 10,
         player.posY + player.height / 10,
@@ -247,7 +254,7 @@ class Bullet {
 function removeLife() {
   var lives = document.getElementById("lives").children;
   if (player.lives <= 0) {
-    console.log("game over");
+    playSound("hit");
     document.getElementById("gameOver").style.display = "grid";
     document.getElementById("endscreenLevel").innerText = player.level;
 
@@ -502,6 +509,7 @@ function update() {
       player.keys["w"] = false;
       player.keys["s"] = false;
       collisions++;
+      playSound("hit");
       if (!game.invulnerability) {
         player.lives--;
         removeLife();
@@ -509,7 +517,8 @@ function update() {
       console.log(collisions);
     }
   });
-  // check each enemy for a collision with player and moves back the player and enemies
+  // check each enemy for a collision with player and moves back the player and enemy*
+  // TODO *move back all enemies in a radius around the player
   enemies.forEach((enemy) => {
     enemy.draw();
     if (enemy.collidesWith(player) === true) {
@@ -519,7 +528,7 @@ function update() {
       player.keys["d"] = false;
       player.keys["w"] = false;
       player.keys["s"] = false;
-
+      playSound("hit");
       moveback = 200;
       if (enemy.posX < player.posX) {
         enemy.posX -= moveback;
@@ -591,6 +600,7 @@ function update() {
 
 function ChooseUpgrade() {
   game.paused = true;
+  playSound("levelUp");
   document.getElementById("background").style.display = "grid";
   document.getElementById("upgrades").style.display = "grid";
   if (player.level % 3 == 0) {
