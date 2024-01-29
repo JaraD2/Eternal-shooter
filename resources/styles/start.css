@@ -1,5 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
+:root {
+  --main-color: rgb(255, 64, 31);
+  --text-color: rgb(240, 248, 255);
+  --secondary-text-color: rgb(0, 0, 0);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,7 +14,7 @@ html,
 body {
   font-family: "Press Start 2P", system-ui;
   background-color: black;
-  color: aliceblue;
+  color: var(--text-color);
   height: 100dvh;
   margin: 0;
   padding: 0;
@@ -19,7 +25,7 @@ body {
 h1 {
   font-size: 80px;
   text-align: center;
-  color: rgb(255, 64, 31);
+  color: var(--main-color);
 }
 
 .menu {
@@ -27,17 +33,17 @@ h1 {
 }
 
 .menu > a {
-  color: aliceblue;
+  color: var(--text-color);
   text-decoration: none;
-  border: 5px solid rgb(255, 64, 31);
+  border: 5px solid var(--main-color);
   place-self: center;
   padding: 10px;
   font-size: 30px;
   transition: all 0.2s ease-out;
 }
 .menu > a:hover {
-  background-color: rgb(255, 64, 31);
-  color: black;
+  background-color: var(--main-color);
+  color: var(--secondary-text-color);
 }
 
 .bottom {
@@ -54,10 +60,10 @@ sub {
   font-size: 20px;
 }
 sub > a {
-  color: rgb(255, 64, 31);
+  color: var(--main-color);
   text-decoration: dotted underline;
 }
 sub > a:hover {
-  color: rgb(254, 38, 0);
+  filter: brightness(1.2);
   text-decoration: underline;
 }
