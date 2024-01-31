@@ -7,10 +7,9 @@ const game = {
   start: Date.now(),
   audio: {
     soundToggled: localStorage.getItem("soundToggled") || true,
-    volume: localStorage.getItem("volume") || 0.25,
+    volume: localStorage.getItem("volume") || 25,
   },
 };
-
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -41,17 +40,17 @@ function playSound(name) {
   switch (name) {
     case "shoot":
       audio = new Audio("resources/sound/shoot.wav");
-      audio.volume = game.audio.volume /100;
+      audio.volume = game.audio.volume / 100;
       audio.play();
       break;
     case "hit":
       audio = new Audio("resources/sound/explosion.wav");
-      audio.volume = game.audio.volume/100;
+      audio.volume = game.audio.volume / 100;
       audio.play();
       break;
     case "levelUp":
       audio = new Audio("resources/sound/levelup.wav");
-      audio.volume = game.audio.volume/100;
+      audio.volume = game.audio.volume / 100;
       audio.play();
       break;
     default:
@@ -61,8 +60,8 @@ function playSound(name) {
 
 class Player {
   constructor(posX, posY, width, height, color) {
-    this.posX = canvasWidth / 2;
-    this.posY = canvasHeight / 2;
+    this.posX = posX || canvasWidth / 2;
+    this.posY = posY || canvasHeight / 2;
     this.width = width || 32;
     this.height = height || 32;
     this.color = color || "red";
@@ -170,7 +169,6 @@ class Player {
       this.velocity[1] *= 0.9;
     }
   }
-
   draw() {
     ctx.beginPath();
     ctx.fillStyle = this.color;
@@ -186,7 +184,6 @@ class Player {
     ctx.fillRect(0, -this.gunHeight / 2, this.gunWidth, this.gunHeight);
     ctx.restore();
   }
-
   shoot() {
     const currentTime = Date.now();
     if (currentTime - this.lastShotTime < this.fireRate) {
@@ -330,12 +327,40 @@ upgrades = {
   },
 };
 
-var player = new Player();
+var safeX = 0;
+var safeY = 0;
+// TODO FIX THIS
+function checksafespawn() {
+  console.log("checking safe spawn");
+  // TODO check if the player is not spawning in a obstacle
+  randomX = Math.random() * canvasWidth;
+  randomY = Math.random() * canvasHeight;
+  console.log(obstacles);
+  console.log("");
+  obstacles.forEach((obstacle) => {
+    console.log(obstacle);
+    console.log("testing");
+    if (
+      console.log("checking safe spawn") &&
+      randomX >= obstacle.posX &&
+      randomX <= obstacle.posX + obstacle.width &&
+      randomY >= obstacle.posY &&
+      randomY <= obstacle.posY + obstacle.height
+    ) {
+      console.log("not safe");
+      checksafespawn();
+    } else {
+      console.log("safe");
+      safeX = randomX;
+      safeY = randomY;
+    }
+  });
+}
 
 class Obstacle {
   constructor(posX, posY, width, height, texture) {
     this.posX = posX;
-    this.posY = posY;
+    this.posY = posY; 
     this.width = width;
     this.height = height;
     this.texture = texture;
@@ -356,14 +381,18 @@ class Obstacle {
 }
 
 const borderWidth = 10000;
+const expectedObstacles = 2 + 4;
+var obstaclesLoaded = 0;
 const obstacles = [];
-
+console.log(obstacles);
 function loadObstacles() {
   loadimage("./resources/images/ruin.png").then((image) => {
     obstacles.push(
       new Obstacle(100, 100, 96, 82, image),
       new Obstacle(400, 300, 96, 82, image)
     );
+    console.log(obstacles);
+    obstaclesLoaded += 2;
   });
   // border
   loadimage("./resources/images/black-pixel.png").then((blackBorderImage) => {
@@ -390,12 +419,15 @@ function loadObstacles() {
         canvasHeight,
         blackBorderImage
       ), // Left border
-      new Obstacle(canvasWidth, 0, borderWidth, canvasHeight, blackBorderImage) // Right border
+      new Obstacle(canvasWidth, 0, borderWidth, canvasHeight, blackBorderImage)
+      // Right border
     );
+    obstaclesLoaded += 4;
   });
 }
 loadObstacles();
-
+console.log(obstacles[0]);
+console.log(obstacles.length);
 class Enemy {
   constructor(posX, posY, width, height, texture) {
     this.posX = posX;
@@ -423,16 +455,16 @@ class Enemy {
 function moveTowardsPlayer() {
   enemies.forEach((enemy) => {
     if (enemy.posX < player.posX) {
-      enemy.posX += 1;
+      enemy.posX += 2;
     }
     if (enemy.posX > player.posX) {
-      enemy.posX -= 1;
+      enemy.posX -= 2;
     }
     if (enemy.posY < player.posY) {
-      enemy.posY += 1;
+      enemy.posY += 2;
     }
     if (enemy.posY > player.posY) {
-      enemy.posY -= 1;
+      enemy.posY -= 2;
     }
   });
 }
@@ -472,8 +504,26 @@ var timer = setInterval(() => {
   time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
 }, 1000);
 
-update();
+var player = undefined;
+
+// timer for checking if the images are ready to be drawn and the game can start
+var imageTimer = setInterval(() => {
+  if (obstaclesLoaded === expectedObstacles) {
+    checksafespawn();
+    player = new Player(safeX, safeY, 32, 32, "red");
+    update();
+    clearInterval(imageTimer);
+  } else if (obstaclesLoaded > expectedObstacles) {
+    console.error("obstaclesLoaded is higher than expectedObstacles");
+  } else if (obstaclesLoaded < expectedObstacles) {
+    console.error("obstaclesLoaded is lower than expectedObstacles");
+  }
+}, 100);
+
+// TODO use deltaTime
+// update();
 function update() {
+  clearInterval(imageTimer);
   if (player.lives <= 0 || game.paused) return;
   requestAnimationFrame(update);
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -502,6 +552,7 @@ function update() {
       bullet.posY <= canvasHeight
   );
   // check each object for a collision with player and moves back player
+
   obstacles.forEach((obstacle) => {
     obstacle.draw();
     if (obstacle.collidesWith(player) === true) {
@@ -631,6 +682,7 @@ function closeMenu() {
   game.paused = false;
   update();
 }
+
 document.addEventListener("keydown", function (e) {
   player.keys[e.key.toLowerCase()] = true;
   if (e.key === "Escape") {
