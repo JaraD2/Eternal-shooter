@@ -111,50 +111,22 @@ class Player {
 
     if (this.keys["a"]) {
       if (this.velocity[0] > -this.speed) {
-        this.velocity[0] -= 0.5;
+        this.velocity[0] -= 0.5 * deltaTime;
       }
     }
     if (this.keys["d"]) {
       if (this.velocity[0] < this.speed) {
-        this.velocity[0] += 0.5;
+        this.velocity[0] += 0.5 * deltaTime;
       }
     }
     if (this.keys["w"]) {
       if (this.velocity[1] > -this.speed) {
-        this.velocity[1] -= 0.5;
+        this.velocity[1] -= 0.5 * deltaTime;
       }
     }
     if (this.keys["s"]) {
       if (this.velocity[1] < this.speed) {
-        this.velocity[1] += 0.5;
-      }
-    }
-    if (this.keys[" "]) {
-      // TODO fix this
-      // this.velocity[0] *= 1.1;
-      // this.velocity[1] *= 1.1;
-      // console.log(`player.posX: ${this.posX}`);
-      // console.log(`player.posY: ${this.posY}`);
-      const currentTime = Date.now();
-      if (currentTime - this.lastJumpTime < this.jumpRate) {
-        return;
-      }
-
-      if (this.keys["a"]) {
-        this.posX -= this.speed;
-        return;
-      }
-      if (this.keys["d"]) {
-        this.posX += this.speed;
-        return;
-      }
-      if (this.keys["w"]) {
-        this.posY -= this.speed;
-        return;
-      }
-      if (this.keys["s"]) {
-        this.posY += this.speed;
-        return;
+        this.velocity[1] += 0.5 * deltaTime;
       }
     }
     if (this.firing) {
@@ -164,10 +136,10 @@ class Player {
     this.posX += this.velocity[0];
     this.posY += this.velocity[1];
     if (this.keys["a"] === false && this.keys["d"] === false) {
-      this.velocity[0] *= 0.9;
+      this.velocity[0] *= 0.1;
     }
     if (this.keys["w"] === false && this.keys["s"] === false) {
-      this.velocity[1] *= 0.9;
+      this.velocity[1] *= 0.1;
     }
   }
   draw() {
@@ -236,15 +208,16 @@ class Bullet {
   constructor(posX, posY, angle) {
     this.posX = posX;
     this.posY = posY;
-    this.speed = 15;
+    this.speed = 5;
     this.angle = angle;
     this.width = 10;
     this.height = 10;
     this.color = "green";
   }
   move() {
-    this.posX += this.speed * Math.cos(this.angle);
-    this.posY += this.speed * Math.sin(this.angle);
+    // TODO add bullet speed upgrade
+    this.posX += deltaTime * 1.5 * Math.cos(this.angle);
+    this.posY += deltaTime * 1.5 * Math.sin(this.angle);
   }
   draw() {
     draw(this.posX, this.posY, this.width, this.height, this.color);
@@ -361,7 +334,7 @@ function checksafespawn() {
 class Obstacle {
   constructor(posX, posY, width, height, texture) {
     this.posX = posX;
-    this.posY = posY; 
+    this.posY = posY;
     this.width = width;
     this.height = height;
     this.texture = texture;
@@ -456,16 +429,16 @@ class Enemy {
 function moveTowardsPlayer() {
   enemies.forEach((enemy) => {
     if (enemy.posX < player.posX) {
-      enemy.posX += 2;
+      enemy.posX += deltaTime * 0.15;
     }
     if (enemy.posX > player.posX) {
-      enemy.posX -= 2;
+      enemy.posX -= deltaTime * 0.15;
     }
     if (enemy.posY < player.posY) {
-      enemy.posY += 2;
+      enemy.posY += deltaTime * 0.15;
     }
     if (enemy.posY > player.posY) {
-      enemy.posY -= 2;
+      enemy.posY -= deltaTime * 0.15;
     }
   });
 }
@@ -507,7 +480,7 @@ var timer = setInterval(() => {
 
 // assinged in the imageTimer
 var player = undefined;
-
+var lastFrameTime = undefined;
 // timer for checking if the images are ready to be drawn and the game can start
 var imageTimer = setInterval(() => {
   if (obstaclesLoaded === expectedObstacles) {
@@ -521,14 +494,22 @@ var imageTimer = setInterval(() => {
   } else if (obstaclesLoaded < expectedObstacles) {
     console.error("obstaclesLoaded is lower than expectedObstacles");
   }
+  lastFrameTime = performance.now();
 }, 100);
 
 // TODO use deltaTime
-// update();
+var deltaTime = 0;
+
 function update() {
   if (game.ready === false) return;
   clearInterval(imageTimer);
   if (player.lives <= 0 || game.paused) return;
+
+  var currentTime = performance.now();
+  deltaTime = currentTime - lastFrameTime;
+  lastFrameTime = currentTime;
+  console.log(player.velocity);
+
   requestAnimationFrame(update);
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   // Translate the canvas based on the player's position
@@ -555,8 +536,8 @@ function update() {
       bullet.posY >= 0 &&
       bullet.posY <= canvasHeight
   );
-  // check each object for a collision with player and moves back player
 
+  // check each object for a collision with player and moves back player
   obstacles.forEach((obstacle) => {
     obstacle.draw();
     if (obstacle.collidesWith(player) === true) {
