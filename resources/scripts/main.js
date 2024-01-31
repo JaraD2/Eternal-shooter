@@ -2,6 +2,7 @@ var canvas = document.querySelector("canvas");
 var ctx = canvas.getContext("2d");
 
 const game = {
+  ready: false,
   paused: false,
   invulnerability: false,
   start: Date.now(),
@@ -504,11 +505,13 @@ var timer = setInterval(() => {
   time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
 }, 1000);
 
+// assinged in the imageTimer
 var player = undefined;
 
 // timer for checking if the images are ready to be drawn and the game can start
 var imageTimer = setInterval(() => {
   if (obstaclesLoaded === expectedObstacles) {
+    game.ready = true;
     checksafespawn();
     player = new Player(safeX, safeY, 32, 32, "red");
     update();
@@ -523,6 +526,7 @@ var imageTimer = setInterval(() => {
 // TODO use deltaTime
 // update();
 function update() {
+  if (game.ready === false) return;
   clearInterval(imageTimer);
   if (player.lives <= 0 || game.paused) return;
   requestAnimationFrame(update);
