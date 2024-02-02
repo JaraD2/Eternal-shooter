@@ -267,7 +267,9 @@ function removeLife() {
       localStorage.setItem("highscoreTime", game.highscore.time);
     }
     document.getElementById("highscoreLevel").innerHTML = game.highscore.level;
-    document.getElementById("highscoreTime").innerHTML = `${Math.floor(game.highscore.time / 60)}:${game.highscore.time % 60}`;
+    document.getElementById("highscoreTime").innerHTML = `${Math.floor(
+      game.highscore.time / 60
+    )}:${game.highscore.time % 60}`;
   }
   lives[lives.length - 1].remove();
 }
@@ -507,7 +509,12 @@ var time = "0:0";
 
 var timer = setInterval(() => {
   diff = Date.now() - game.start;
-  time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
+  minutes = Math.floor(diff / 60000);
+  seconds = Math.floor(diff / 1000) % 60;
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  time = `${minutes}:${seconds}`;
   document.getElementById("timer").innerText = time;
 }, 1000);
 
