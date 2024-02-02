@@ -228,7 +228,6 @@ class Bullet {
     this.color = "green";
   }
   move() {
-    // TODO add bullet speed upgrade
     this.posX += deltaTime * this.speed * Math.cos(this.angle);
     this.posY += deltaTime * this.speed * Math.sin(this.angle);
   }
@@ -271,7 +270,6 @@ upgrades = {
     name: "Add life",
     disc: "add a life",
     effect: function () {
-      // TODO as an upgrade choice
       var lives = document.getElementById("lives");
       const img = document.createElement("img");
       img.src = "./resources/images/heart2.png";
@@ -337,10 +335,8 @@ upgrades = {
 
 var safeX = 0;
 var safeY = 0;
-// TODO FIX THIS
 function checksafespawn() {
   console.log("checking safe spawn");
-  // TODO check if the player is not spawning in a obstacle
   randomX = Math.random() * canvasWidth;
   randomY = Math.random() * canvasHeight;
   console.log(obstacles);
@@ -528,7 +524,6 @@ var imageTimer = setInterval(() => {
   lastFrameTime = performance.now();
 }, 100);
 
-// TODO use deltaTime
 var deltaTime = 0;
 
 function update() {
