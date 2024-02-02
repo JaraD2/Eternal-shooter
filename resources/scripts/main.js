@@ -88,6 +88,14 @@ class Player {
         level: 0,
       },
       doubleShot: false,
+      speedUpgrade: {
+        active: false,
+        level: 0,
+      },
+      bulletSpeed: {
+        active: false,
+        level: 0,
+      },
     };
     this.bullets = [];
     this.lastShotTime = 0;
@@ -111,22 +119,22 @@ class Player {
 
     if (this.keys["a"]) {
       if (this.velocity[0] > -this.speed) {
-        this.velocity[0] -= 0.5 * deltaTime;
+        this.velocity[0] -= deltaTime / 2;
       }
     }
     if (this.keys["d"]) {
       if (this.velocity[0] < this.speed) {
-        this.velocity[0] += 0.5 * deltaTime;
+        this.velocity[0] += deltaTime / 3;
       }
     }
     if (this.keys["w"]) {
       if (this.velocity[1] > -this.speed) {
-        this.velocity[1] -= 0.5 * deltaTime;
+        this.velocity[1] -= deltaTime / 3;
       }
     }
     if (this.keys["s"]) {
       if (this.velocity[1] < this.speed) {
-        this.velocity[1] += 0.5 * deltaTime;
+        this.velocity[1] += deltaTime / 3;
       }
     }
     if (this.firing) {
@@ -171,10 +179,15 @@ class Player {
     shoot();
     function shoot() {
       playSound("shoot");
+      var speed = 1.5;
+      if (player.activeUpgrades.bulletSpeed.active) {
+        speed += 1 * player.activeUpgrades.bulletSpeed.level;
+      }
       const bullet = new Bullet(
         player.posX + player.width / 10,
         player.posY + player.height / 10,
-        player.gunAngle
+        player.gunAngle,
+        speed
       );
       player.bullets.push(bullet);
 
@@ -205,10 +218,10 @@ class Player {
 }
 
 class Bullet {
-  constructor(posX, posY, angle) {
+  constructor(posX, posY, angle, speed) {
     this.posX = posX;
     this.posY = posY;
-    this.speed = 5;
+    this.speed = speed || 1.5;
     this.angle = angle;
     this.width = 10;
     this.height = 10;
@@ -216,8 +229,8 @@ class Bullet {
   }
   move() {
     // TODO add bullet speed upgrade
-    this.posX += deltaTime * 1.5 * Math.cos(this.angle);
-    this.posY += deltaTime * 1.5 * Math.sin(this.angle);
+    this.posX += deltaTime * this.speed * Math.cos(this.angle);
+    this.posY += deltaTime * this.speed * Math.sin(this.angle);
   }
   draw() {
     draw(this.posX, this.posY, this.width, this.height, this.color);
@@ -299,6 +312,27 @@ upgrades = {
       delete upgrades.doubleShot;
     },
   },
+  speedUpgrade: {
+    name: "Speed upgrade",
+    disc: "increase your speed",
+    effect: function () {
+      player.speed += 1;
+      closeMenu();
+      player.activeUpgrades.speedUpgrade.level++;
+      if (player.activeUpgrades.speedUpgrade.level == 2)
+        delete upgrades.speedUpgrade;
+    },
+  },
+  bulletSpeed: {
+    name: "Bullet speed",
+    disc: "increase the speed of your bullets",
+    effect: function () {
+      player.activeUpgrades.bulletSpeed.active = true;
+      player.activeUpgrades.bulletSpeed.level++;
+      closeMenu();
+      if (player.activeUpgrades.bulletSpeed.level >= 3) delete upgrades.bulletSpeed;
+    },
+  },
 };
 
 var safeX = 0;
@@ -365,7 +399,6 @@ function loadObstacles() {
       new Obstacle(100, 100, 96, 82, image),
       new Obstacle(400, 300, 96, 82, image)
     );
-    console.log(obstacles);
     obstaclesLoaded += 2;
   });
   // border
@@ -400,8 +433,6 @@ function loadObstacles() {
   });
 }
 loadObstacles();
-console.log(obstacles[0]);
-console.log(obstacles.length);
 class Enemy {
   constructor(posX, posY, width, height, texture) {
     this.posX = posX;
@@ -508,7 +539,6 @@ function update() {
   var currentTime = performance.now();
   deltaTime = currentTime - lastFrameTime;
   lastFrameTime = currentTime;
-  console.log(player.velocity);
 
   requestAnimationFrame(update);
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -695,6 +725,10 @@ document.addEventListener("keydown", function (e) {
 
     ChooseUpgrade();
   }
+  if (e.key === "R") {
+    // Reset the game
+    location.reload();
+  }
 });
 document.addEventListener("keyup", function (e) {
   player.keys[e.key.toLowerCase()] = false;
@@ -703,11 +737,7 @@ var lastMouseX = 0;
 var lastMouseY = 0;
 document.addEventListener("mousemove", function (e) {
   lastMouseX = e.clientX;
-  // console.log(lastMouseX);
-  // var rect = canvas.getBoundingClientRect();
   lastMouseY = e.clientY;
-  // lastMouseX -= rect.left - (-player.posX + canvasWidth / 2);
-  // lastMouseY -= rect.top - (-player.posY + canvasHeight / 2);
 });
 function aim(lastMouseX, lastMouseY) {
   var angle = Math.atan2(lastMouseY - player.posY, lastMouseX - player.posX);
