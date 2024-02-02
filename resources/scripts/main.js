@@ -10,6 +10,10 @@ const game = {
     soundToggled: localStorage.getItem("soundToggled") || true,
     volume: localStorage.getItem("volume") || 25,
   },
+  highscore: {
+    level: localStorage.getItem("highscoreLevel") || 1,
+    time: localStorage.getItem("highscoreTime") || "0:0",
+  },
 };
 
 canvas.width = window.innerWidth;
@@ -108,15 +112,6 @@ class Player {
   }
 
   position() {
-    if (this.keys["m"]) {
-      // just for debugging
-      console.log(`player.posX: ${this.posX}`);
-      console.log(`player.posY: ${this.posY}`);
-      console.log(`player.velocity[0]: ${this.velocity[0]}`);
-      console.log(`player.velocity[1]: ${this.velocity[1]}`);
-      console.log(`player.gunAngle: ${this.gunAngle}`);
-    }
-
     if (this.keys["a"]) {
       if (this.velocity[0] > -this.speed) {
         this.velocity[0] -= deltaTime / 2;
@@ -251,6 +246,28 @@ function removeLife() {
     document.getElementById("restart").addEventListener("click", function () {
       location.reload();
     });
+
+    if (player.level > game.highscore.level) {
+      game.highscore.level = player.level;
+      localStorage.setItem("highscoreLevel", player.level);
+    }
+
+    time = time
+      .split(":")
+      .map(Number)
+      .reduce((acc, time) => acc * 60 + time);
+
+    game.highscore.time = game.highscore.time
+      .split(":")
+      .map(Number)
+      .reduce((acc, time) => acc * 60 + time);
+
+    if (time > game.highscore.time) {
+      game.highscore.time = time;
+      localStorage.setItem("highscoreTime", game.highscore.time);
+    }
+    document.getElementById("highscoreLevel").innerHTML = game.highscore.level;
+    document.getElementById("highscoreTime").innerHTML = `${Math.floor(game.highscore.time / 60)}:${game.highscore.time % 60}`;
   }
   lives[lives.length - 1].remove();
 }
@@ -261,7 +278,6 @@ upgrades = {
     disc: "increase the fire rate of your gun",
     effect: function () {
       player.fireRate -= 100;
-      console.log(player.fireRate);
       closeMenu();
       if (player.fireRate <= 300) delete upgrades.fireRate;
     },
@@ -328,7 +344,8 @@ upgrades = {
       player.activeUpgrades.bulletSpeed.active = true;
       player.activeUpgrades.bulletSpeed.level++;
       closeMenu();
-      if (player.activeUpgrades.bulletSpeed.level >= 3) delete upgrades.bulletSpeed;
+      if (player.activeUpgrades.bulletSpeed.level >= 3)
+        delete upgrades.bulletSpeed;
     },
   },
 };
@@ -336,14 +353,9 @@ upgrades = {
 var safeX = 0;
 var safeY = 0;
 function checksafespawn() {
-  console.log("checking safe spawn");
   randomX = Math.random() * canvasWidth;
   randomY = Math.random() * canvasHeight;
-  console.log(obstacles);
-  console.log("");
   obstacles.forEach((obstacle) => {
-    console.log(obstacle);
-    console.log("testing");
     if (
       console.log("checking safe spawn") &&
       randomX >= obstacle.posX &&
@@ -351,10 +363,8 @@ function checksafespawn() {
       randomY >= obstacle.posY &&
       randomY <= obstacle.posY + obstacle.height
     ) {
-      console.log("not safe");
       checksafespawn();
     } else {
-      console.log("safe");
       safeX = randomX;
       safeY = randomY;
     }
@@ -388,7 +398,6 @@ const borderWidth = 10000;
 const expectedObstacles = 2 + 4;
 var obstaclesLoaded = 0;
 const obstacles = [];
-console.log(obstacles);
 function loadObstacles() {
   loadimage("./resources/images/ruin.png").then((image) => {
     obstacles.push(
@@ -479,7 +488,6 @@ function createEnemy() {
   if (now - lastSpawnTime < spawnRates[stage]) {
     return;
   }
-
   const EnemyX = Math.random() * canvasWidth;
   const EnemyY = Math.random() * canvasHeight;
   const nonoZone = 200;
@@ -495,14 +503,12 @@ function createEnemy() {
   });
   lastSpawnTime = Date.now(); // lower is faster
 }
-var time = 0;
+var time = "0:0";
 
 var timer = setInterval(() => {
   diff = Date.now() - game.start;
-  document.getElementById("timer").innerText = `${Math.floor(diff / 60000)}:${
-    Math.floor(diff / 1000) % 60
-  }`;
   time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
+  document.getElementById("timer").innerText = time;
 }, 1000);
 
 // assinged in the imageTimer
@@ -578,7 +584,6 @@ function update() {
         player.lives--;
         removeLife();
       }
-      console.log(collisions);
     }
   });
   // check each enemy for a collision with player and moves back the player and enemy*
@@ -611,7 +616,6 @@ function update() {
         player.lives--;
         removeLife();
       }
-      console.log(collisions);
     }
   });
   // check if the the bullet collided with a enemy and remove the enemy
@@ -629,7 +633,6 @@ function update() {
         const expBar = document.getElementById("expBar");
         expBar.value = expBar.value + enemy.expValue;
         if (expBar.value == expBar.max) {
-          console.log("expbar full");
           player.level++;
           document.getElementById("level").innerText = player.level;
           expBar.value = 0;
@@ -685,11 +688,13 @@ function ChooseUpgrade() {
     return randomKey;
   }
 }
+
 function closeMenu() {
   document.getElementById("background").style.display = "none";
   document.getElementById("upgrades").style.display = "none";
   document.getElementById("pauseMenu").style.display = "none";
   game.paused = false;
+  lastFrameTime = performance.now();
   update();
 }
 
