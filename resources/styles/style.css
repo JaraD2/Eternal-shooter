@@ -27,6 +27,7 @@ body {
 
 canvas {
   background-color: rgb(30, 30, 30);
+  cursor: none;
 }
 
 .HUD {

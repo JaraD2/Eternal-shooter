@@ -463,6 +463,13 @@ function loadObstacles() {
     obstacles.push(
       new Obstacle(100, 100, 96, 82, image),
       new Obstacle(400, 300, 96, 82, image),
+      new Obstacle(700, 500, 96, 82, image),
+      new Obstacle(950, 350, 96, 82, image),
+      new Obstacle(1350, 200, 96, 82, image),
+      new Obstacle(1700, 600, 96, 82, image),
+      new Obstacle(1300, 700, 96, 82, image),
+      new Obstacle(100, 600, 96, 82, image),
+
     );
     obstaclesLoaded += 2;
   });
@@ -703,7 +710,7 @@ function update() {
           player.level++;
           document.getElementById("level").innerText = player.level;
           expBar.value = 0;
-          expBar.max += 10;
+          expBar.max += 20;
           ChooseUpgrade();
         }
       }
@@ -720,7 +727,7 @@ function update() {
     });
   });
 
-  draw(lastMouseX, lastMouseY, 20, 20, "red");
+  draw(lastMouseX-5, lastMouseY-5, 10, 10, "red");
 
   createEnemy();
   // not able to use Enemy.createEnemy because there is no instence of Enemy available at the start
