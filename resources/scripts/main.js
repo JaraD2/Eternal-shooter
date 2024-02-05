@@ -4,8 +4,11 @@ var ctx = canvas.getContext("2d");
 const game = {
   ready: false,
   paused: false,
-  invulnerability: false,
   start: Date.now(),
+  cheats: {
+    spawnEnemies: true,
+    invulnerability: false,
+  },
   audio: {
     soundToggled: localStorage.getItem("soundToggled") || true,
     volume: localStorage.getItem("volume") || 25,
@@ -100,6 +103,10 @@ class Player {
         active: false,
         level: 0,
       },
+      shotgun: {
+        active: false,
+        spread: 0.5,
+      },
     };
     this.bullets = [];
     this.lastShotTime = 0;
@@ -185,6 +192,16 @@ class Player {
         speed
       );
       player.bullets.push(bullet);
+      if (player.activeUpgrades.shotgun.active) {
+        for (let i = 1; i <= 3; i++) {
+          const bullet = new Bullet(
+            player.posX + player.width / 10,
+            player.posY + player.height / 10,
+            player.gunAngle + (i - 2) * player.activeUpgrades.shotgun.spread
+          );
+          player.bullets.push(bullet);
+        }
+      }
 
       if (player.activeUpgrades.shootingRing.active) {
         var projectilesPerShot = 2 * player.activeUpgrades.shootingRing.level;
@@ -350,6 +367,44 @@ upgrades = {
         delete upgrades.bulletSpeed;
     },
   },
+  shotgun: {
+    name: "Shotgun",
+    disc: "shoot multiple bullets at once",
+    effect: function () {
+      player.activeUpgrades.shotgun.active = true;
+      closeMenu();
+      delete upgrades.shotgun;
+
+      (upgrades.shotgunSpreadIncrease = {
+        name: "spread increase",
+        disc: "increase the spread of the shotgun",
+        effect: function () {
+          player.activeUpgrades.shotgun.spread += 0.5;
+          closeMenu();
+          if (player.activeUpgrades.shotgun.spread >= 2) {
+            delete upgrades.shotgunSpreadIncrease;
+          }
+          if (upgrades.shotgunSpreadDecrease)
+            delete upgrades.shotgunSpreadDecrease;
+        },
+      }),
+        (upgrades.shotgunSpreadDecrease = {
+          name: "spread decrease",
+          disc: "decrease the spread of the shotgun",
+          effect: function () {
+            console.log(player.activeUpgrades.shotgun.spread);
+            player.activeUpgrades.shotgun.spread -= 0.1;
+            console.log(player.activeUpgrades.shotgun.spread);
+            closeMenu();
+            if (player.activeUpgrades.shotgun.spread <= 0.3) {
+              delete upgrades.shotgunSpreadDecrease;
+            }
+            if (upgrades.shotgunSpreadIncrease)
+              delete upgrades.shotgunSpreadIncrease;
+          },
+        });
+    },
+  },
 };
 
 var safeX = 0;
@@ -486,6 +541,8 @@ var lastSpawnTime = 0;
 var stage = 0;
 var spawnRates = [1000, 750, 500, 500, 250, 100];
 function createEnemy() {
+  if (game.paused) return;
+  if (!game.cheats.spawnEnemies) return;
   const now = Date.now();
   if (now - lastSpawnTime < spawnRates[stage]) {
     return;
@@ -587,7 +644,7 @@ function update() {
       player.keys["s"] = false;
       collisions++;
       playSound("hit");
-      if (!game.invulnerability) {
+      if (!game.cheats.invulnerability) {
         player.lives--;
         removeLife();
       }
@@ -619,7 +676,7 @@ function update() {
         enemy.posY += moveback;
       }
       collisions++;
-      if (!game.invulnerability) {
+      if (!game.cheats.invulnerability) {
         player.lives--;
         removeLife();
       }
