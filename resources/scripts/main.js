@@ -189,7 +189,7 @@ class Player {
         player.posX + player.width / 10,
         player.posY + player.height / 10,
         player.gunAngle,
-        speed
+        speed,
       );
       player.bullets.push(bullet);
       if (player.activeUpgrades.shotgun.active) {
@@ -197,7 +197,8 @@ class Player {
           const bullet = new Bullet(
             player.posX + player.width / 10,
             player.posY + player.height / 10,
-            player.gunAngle + (i - 2) * player.activeUpgrades.shotgun.spread
+            player.gunAngle + (i - 2) * player.activeUpgrades.shotgun.spread,
+            speed,
           );
           player.bullets.push(bullet);
         }
@@ -210,7 +211,8 @@ class Player {
           const bullet = new Bullet(
             player.posX + player.width / 10,
             player.posY + player.height / 10,
-            player.gunAngle + i * angleBetweenProjectiles
+            player.gunAngle + i * angleBetweenProjectiles,
+            speed,
           );
           player.bullets.push(bullet);
         }
@@ -220,7 +222,8 @@ class Player {
         const bullet = new Bullet(
           player.posX - player.width / 10,
           player.posY - player.height / 10,
-          player.gunAngle + 1 * angleBetweenProjectiles
+          player.gunAngle + 1 * angleBetweenProjectiles,
+          speed,
         );
         player.bullets.push(bullet);
       }
@@ -285,7 +288,7 @@ function removeLife() {
     }
     document.getElementById("highscoreLevel").innerHTML = game.highscore.level;
     document.getElementById("highscoreTime").innerHTML = `${Math.floor(
-      game.highscore.time / 60
+      game.highscore.time / 60,
     )}:${game.highscore.time % 60}`;
   }
   lives[lives.length - 1].remove();
@@ -459,7 +462,7 @@ function loadObstacles() {
   loadimage("./resources/images/ruin.png").then((image) => {
     obstacles.push(
       new Obstacle(100, 100, 96, 82, image),
-      new Obstacle(400, 300, 96, 82, image)
+      new Obstacle(400, 300, 96, 82, image),
     );
     obstaclesLoaded += 2;
   });
@@ -472,23 +475,23 @@ function loadObstacles() {
         -borderWidth,
         canvasWidth + 2 * borderWidth,
         borderWidth,
-        blackBorderImage
+        blackBorderImage,
       ), // Top border
       new Obstacle(
         -borderWidth,
         canvasHeight,
         canvasWidth + 2 * borderWidth,
         borderWidth,
-        blackBorderImage
+        blackBorderImage,
       ), // Bottom border
       new Obstacle(
         -borderWidth,
         0,
         borderWidth,
         canvasHeight,
-        blackBorderImage
+        blackBorderImage,
       ), // Left border
-      new Obstacle(canvasWidth, 0, borderWidth, canvasHeight, blackBorderImage)
+      new Obstacle(canvasWidth, 0, borderWidth, canvasHeight, blackBorderImage),
       // Right border
     );
     obstaclesLoaded += 4;
@@ -629,7 +632,7 @@ function update() {
       bullet.posX >= 0 &&
       bullet.posX <= canvasWidth &&
       bullet.posY >= 0 &&
-      bullet.posY <= canvasHeight
+      bullet.posY <= canvasHeight,
   );
 
   // check each object for a collision with player and moves back player
@@ -775,7 +778,7 @@ document.addEventListener("keydown", function (e) {
       timer = setInterval(() => {
         diff = Date.now() - game.start;
         document.getElementById("timer").innerText = `${Math.floor(
-          diff / 60000
+          diff / 60000,
         )}:${Math.floor(diff / 1000) % 60}`;
         time = `${Math.floor(diff / 60000)}:${Math.floor(diff / 1000) % 60}`;
       }, 1000);
