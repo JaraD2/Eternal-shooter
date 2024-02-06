@@ -107,6 +107,10 @@ class Player {
         active: false,
         spread: 0.5,
       },
+      cannon: {
+        active: false,
+        level: 1,
+      },
     };
     this.bullets = [];
     this.lastShotTime = 0;
@@ -188,6 +192,7 @@ class Player {
       const bullet = new Bullet(
         player.posX,
         player.posY,
+        10 * player.activeUpgrades.cannon.level,
         player.gunAngle,
         speed,
       );
@@ -197,6 +202,7 @@ class Player {
           const bullet = new Bullet(
             player.posX,
             player.posY,
+            10 * player.activeUpgrades.cannon.level,
             player.gunAngle + (i - 2) * player.activeUpgrades.shotgun.spread,
             speed,
           );
@@ -211,6 +217,7 @@ class Player {
           const bullet = new Bullet(
             player.posX,
             player.posY,
+            10 * player.activeUpgrades.cannon.level,
             player.gunAngle + i * angleBetweenProjectiles,
             speed,
           );
@@ -222,6 +229,7 @@ class Player {
         const bullet = new Bullet(
           player.posX,
           player.posY,
+          10 * player.activeUpgrades.cannon.level,
           player.gunAngle + 1 * angleBetweenProjectiles,
           speed,
         );
@@ -233,13 +241,13 @@ class Player {
 }
 
 class Bullet {
-  constructor(posX, posY, angle, speed) {
+  constructor(posX, posY,size, angle, speed) {
     this.posX = posX;
     this.posY = posY;
     this.speed = speed || 1.5;
     this.angle = angle;
-    this.width = 10;
-    this.height = 10;
+    this.width = size || 10;
+    this.height = size || 10;
     this.color = "green";
   }
   move() {
@@ -407,6 +415,16 @@ upgrades = {
               delete upgrades.shotgunSpreadIncrease;
           },
         });
+    },
+  },
+  cannon: {
+    name: "Cannon",
+    disc: "shoot a big bullet",
+    effect: function () {
+      player.activeUpgrades.cannon.active = true;
+      player.activeUpgrades.cannon.level++;
+      closeMenu();
+      if (player.activeUpgrades.cannon.level == 3) delete upgrades.cannon;
     },
   },
 };
@@ -739,10 +757,14 @@ function update() {
   player.bullets.forEach((bullet) => {
     enemies.forEach((enemy) => {
       if (
-        bullet.posX >= enemy.posX &&
+        // bullet.posX >= enemy.posX &&
+        // bullet.posX <= enemy.posX + enemy.width &&
+        // bullet.posY >= enemy.posY &&
+        // bullet.posY <= enemy.posY + enemy.height
         bullet.posX <= enemy.posX + enemy.width &&
-        bullet.posY >= enemy.posY &&
-        bullet.posY <= enemy.posY + enemy.height
+        bullet.posX + bullet.width >= enemy.posX &&
+        bullet.posY <= enemy.posY + enemy.height &&
+        bullet.posY + bullet.height >= enemy.posY
       ) {
         enemies.splice(enemies.indexOf(enemy), 1);
         player.bullets.splice(player.bullets.indexOf(bullet), 1);
