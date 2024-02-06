@@ -370,6 +370,7 @@ upgrades = {
         delete upgrades.bulletSpeed;
     },
   },
+  // has sub upgrades
   shotgun: {
     name: "Shotgun",
     disc: "shoot multiple bullets at once",
@@ -415,20 +416,25 @@ var safeY = 0;
 function checksafespawn() {
   randomX = Math.random() * canvasWidth;
   randomY = Math.random() * canvasHeight;
-  obstacles.forEach((obstacle) => {
-    if (
-      console.log("checking safe spawn") &&
-      randomX >= obstacle.posX &&
-      randomX <= obstacle.posX + obstacle.width &&
-      randomY >= obstacle.posY &&
-      randomY <= obstacle.posY + obstacle.height
-    ) {
-      checksafespawn();
-    } else {
-      safeX = randomX;
-      safeY = randomY;
-    }
-  });
+  let isSafeSpawn = false;
+  while (!isSafeSpawn) {
+    randomX = Math.random() * canvasWidth;
+    randomY = Math.random() * canvasHeight;
+
+    isSafeSpawn = true;
+    obstacles.forEach((obstacle) => {
+      if (
+        randomX + 128 >= obstacle.posX &&
+        randomX <= obstacle.posX + obstacle.width &&
+        randomY + 128 >= obstacle.posY &&
+        randomY <= obstacle.posY + obstacle.height
+      ) {
+        isSafeSpawn = false;
+      }
+    });
+  }
+  safeX = randomX;
+  safeY = randomY;
 }
 
 class Obstacle {
@@ -835,7 +841,7 @@ document.addEventListener("keydown", function (e) {
 
     ChooseUpgrade();
   }
-  if (e.key === "R") {
+  if (e.key === "r") {
     // Reset the game
     location.reload();
   }
