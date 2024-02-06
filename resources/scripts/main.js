@@ -186,8 +186,8 @@ class Player {
         speed += 1 * player.activeUpgrades.bulletSpeed.level;
       }
       const bullet = new Bullet(
-        player.posX + player.width / 10,
-        player.posY + player.height / 10,
+        player.posX,
+        player.posY,
         player.gunAngle,
         speed,
       );
@@ -195,8 +195,8 @@ class Player {
       if (player.activeUpgrades.shotgun.active) {
         for (let i = 1; i <= 3; i++) {
           const bullet = new Bullet(
-            player.posX + player.width / 10,
-            player.posY + player.height / 10,
+            player.posX,
+            player.posY,
             player.gunAngle + (i - 2) * player.activeUpgrades.shotgun.spread,
             speed,
           );
@@ -209,8 +209,8 @@ class Player {
         const angleBetweenProjectiles = (2 * Math.PI) / projectilesPerShot;
         for (let i = 1; i < projectilesPerShot; i++) {
           const bullet = new Bullet(
-            player.posX + player.width / 10,
-            player.posY + player.height / 10,
+            player.posX,
+            player.posY,
             player.gunAngle + i * angleBetweenProjectiles,
             speed,
           );
@@ -220,8 +220,8 @@ class Player {
       if (player.activeUpgrades.shootBehind) {
         const angleBetweenProjectiles = (2 * Math.PI) / 2;
         const bullet = new Bullet(
-          player.posX - player.width / 10,
-          player.posY - player.height / 10,
+          player.posX,
+          player.posY,
           player.gunAngle + 1 * angleBetweenProjectiles,
           speed,
         );
@@ -555,15 +555,13 @@ function moveTowardsPlayer() {
       enemy.posY -= deltaTime * 0.15;
     }
   });
-  function collidesWithObjects(enemy) {
-    // Add collision detection logic here
-    // Check if the enemy collides with any objects
+  function collidesWithObjects(posX, posY, enemy) {
     for (let obstacle of obstacles) {
       if (
-        enemy.posX <= obstacle.posX + obstacle.width &&
-        enemy.posX + enemy.width >= obstacle.posX &&
-        enemy.posY <= obstacle.posY + obstacle.height &&
-        enemy.posY + enemy.height >= obstacle.posY
+        posX <= obstacle.posX + obstacle.width &&
+        posX + enemy.width >= obstacle.posX &&
+        posY <= obstacle.posY + obstacle.height &&
+        posY + enemy.height >= obstacle.posY
       ) {
         return true; // Collision detected
       }
