@@ -56,3 +56,8 @@ function populateStorage() {
   localStorage.setItem("volume", sound.slider.value);
   localStorage.setItem("soundToggled", sound.toggle.checked);
 }
+function reset() {
+  sound.slider.value = undefined;
+  sound.sliderValue.value = undefined;
+  sound.toggle.checked = false;
+}
