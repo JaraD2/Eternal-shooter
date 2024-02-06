@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="./resources/images/favicon.png" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="./resources/images/favicon.png"
+      type="image/x-icon"
+    />
     <link rel="stylesheet" href="./resources/styles/settings.css" />
     <title>Settings</title>
   </head>
@@ -26,15 +30,22 @@
               value="50"
               id="sound-slider"
             />
-            <input type="number" name="" id="sound-slider-value" value="1" maxlength="3"/>
+            <input
+              type="number"
+              name=""
+              id="sound-slider-value"
+              value="1"
+              maxlength="3"
+            />
           </div>
         </div>
       </div>
     </div>
     <div class="back">
-       <a href="./index.html">Back</a> <!-- does not automatically save. make a popup to save -->
-       <button onclick="populateStorage()">Confirm</button>
-      <button onclick="reset()">Reset</button>
+      <a href="./index.html">Back</a>
+      <!-- does not automatically save. make a popup to save -->
+      <button onclick="populateStorage()">Confirm</button>
+      <button onclick="reset">Reset</button>
     </div>
     <script src="./resources/scripts/settings.js"></script>
   </body>

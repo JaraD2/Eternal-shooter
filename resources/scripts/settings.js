@@ -31,7 +31,7 @@ sound.sliderValue.addEventListener("input", () => {
 });
 // block non-numeric input
 sound.sliderValue.addEventListener("keypress", (e) => {
-  if (e.key == "1", "2", "3", "4", "5", "6", "7", "8", "9", "0") {
+  if ((e.key == "1", "2", "3", "4", "5", "6", "7", "8", "9", "0")) {
     // do nothing
   } else {
     e.preventDefault();

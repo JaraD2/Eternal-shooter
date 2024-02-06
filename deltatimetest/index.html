@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="box"></div>
+
+    <script>
+      let boxPosition = 0; // Starting position
+      const speed = 100; // 100 pixels per second
+      let lastTimestamp = 0; // The last time the animation loop was run
+
+      function animate(timestamp) {
+        let deltaTime = (timestamp - lastTimestamp) / 1000; // Convert delta time to seconds
+        console.log(deltaTime);
+        lastTimestamp = timestamp;
+        boxPosition += speed * deltaTime;
+        // Apply the new position to the box
+        document.querySelector(
+          ".box"
+        ).style.transform = `translateX(${boxPosition}px)`;
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    </script>
+
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+      }
+    </style>
+  </body>
+</html>
