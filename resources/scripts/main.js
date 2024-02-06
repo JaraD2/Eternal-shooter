@@ -469,7 +469,6 @@ function loadObstacles() {
       new Obstacle(1700, 600, 96, 82, image),
       new Obstacle(1300, 700, 96, 82, image),
       new Obstacle(100, 600, 96, 82, image),
-
     );
     obstaclesLoaded += 2;
   });
@@ -531,19 +530,46 @@ class Enemy {
 
 function moveTowardsPlayer() {
   enemies.forEach((enemy) => {
-    if (enemy.posX < player.posX) {
+    if (
+      enemy.posX < player.posX &&
+      !collidesWithObjects(enemy.posX + deltaTime * 0.15, enemy.posY, enemy)
+    ) {
       enemy.posX += deltaTime * 0.15;
     }
-    if (enemy.posX > player.posX) {
+    if (
+      enemy.posX > player.posX &&
+      !collidesWithObjects(enemy.posX - deltaTime * 0.15, enemy.posY, enemy)
+    ) {
       enemy.posX -= deltaTime * 0.15;
     }
-    if (enemy.posY < player.posY) {
+    if (
+      enemy.posY < player.posY &&
+      !collidesWithObjects(enemy.posX, enemy.posY + deltaTime * 0.15, enemy)
+    ) {
       enemy.posY += deltaTime * 0.15;
     }
-    if (enemy.posY > player.posY) {
+    if (
+      enemy.posY > player.posY &&
+      !collidesWithObjects(enemy.posX, enemy.posY - deltaTime * 0.15, enemy)
+    ) {
       enemy.posY -= deltaTime * 0.15;
     }
   });
+  function collidesWithObjects(enemy) {
+    // Add collision detection logic here
+    // Check if the enemy collides with any objects
+    for (let obstacle of obstacles) {
+      if (
+        enemy.posX <= obstacle.posX + obstacle.width &&
+        enemy.posX + enemy.width >= obstacle.posX &&
+        enemy.posY <= obstacle.posY + obstacle.height &&
+        enemy.posY + enemy.height >= obstacle.posY
+      ) {
+        return true; // Collision detected
+      }
+    }
+    return false; // No collision
+  }
 }
 
 var enemies = [];
@@ -551,6 +577,7 @@ var lastSpawnTime = 0;
 var stage = 0;
 var spawnRates = [1000, 750, 500, 500, 250, 100];
 function createEnemy() {
+  if (enemies.length >= 40) return;
   if (game.paused) return;
   if (!game.cheats.spawnEnemies) return;
   const now = Date.now();
@@ -567,6 +594,17 @@ function createEnemy() {
     EnemyY <= player.posY + player.height + nonoZone
   )
     return;
+  // check if inside an obstacle
+  for (let obstacle of obstacles) {
+    if (
+      EnemyX + 42 >= obstacle.posX &&
+      EnemyX <= obstacle.posX + obstacle.width &&
+      EnemyY + 48 >= obstacle.posY &&
+      EnemyY <= obstacle.posY + obstacle.height
+    ) {
+      return;
+    }
+  }
   loadimage("./resources/images/enemy.png").then((image) => {
     enemies.push(new Enemy(EnemyX, EnemyY, 42, 48, image));
   });
@@ -727,7 +765,7 @@ function update() {
     });
   });
 
-  draw(lastMouseX-5, lastMouseY-5, 10, 10, "red");
+  draw(lastMouseX - 5, lastMouseY - 5, 10, 10, "red");
 
   createEnemy();
   // not able to use Enemy.createEnemy because there is no instence of Enemy available at the start
