@@ -103,6 +103,10 @@ class Player {
         active: false,
         level: 0,
       },
+      EXPmultiplier: {
+        active: false,
+        level: 1,
+      },
       shotgun: {
         active: false,
         spread: 0.5,
@@ -241,7 +245,7 @@ class Player {
 }
 
 class Bullet {
-  constructor(posX, posY,size, angle, speed) {
+  constructor(posX, posY, size, angle, speed) {
     this.posX = posX;
     this.posY = posY;
     this.speed = speed || 1.5;
@@ -306,16 +310,23 @@ upgrades = {
   fireRate: {
     name: "FireRate increase",
     disc: "increase the fire rate of your gun",
+    maxLevel: 4,
+    currentLevel: 0,
     effect: function () {
       player.fireRate -= 100;
+      upgrades.fireRate.currentlevel++;
       closeMenu();
-      if (player.fireRate <= 300) delete upgrades.fireRate;
+      if (upgrades.fireRate.currentlevel >= upgrades.fireRate.maxLevel)
+        delete upgrades.fireRate;
     },
   },
   addLife: {
     name: "Add life",
     disc: "add a life",
+    maxLevel: "None",
+    currentLevel: 0,
     effect: function () {
+      upgrades.addLife.currentlevel++;
       var lives = document.getElementById("lives");
       const img = document.createElement("img");
       img.src = "./resources/images/heart2.png";
@@ -329,18 +340,23 @@ upgrades = {
   shootingRing: {
     name: "Shooting ring",
     disc: "shoot a ring of bullets",
+    maxLevel: 3,
+    currentLevel: 0,
     effect: function () {
+      upgrades.shootingRing.currentlevel++;
       player.activeUpgrades.shootingRing.active = true;
       closeMenu();
       // delete this upgrade from the list
       player.activeUpgrades.shootingRing.level++;
-      if (player.activeUpgrades.shootingRing.level == 3)
+      if (upgrades.shootingRing.currentlevel >= upgrades.shootingRing.maxLevel)
         delete upgrades.shootingRing;
     },
   },
   shootBehind: {
     name: "Shoot behind",
     disc: "shoot a bullet behind you",
+    maxLevel: 1,
+    currentLevel: 0,
     effect: function () {
       player.activeUpgrades.shootBehind = true;
       closeMenu();
@@ -350,6 +366,8 @@ upgrades = {
   doubleShot: {
     name: "Double shot",
     disc: "shoot two bullets at once",
+    maxLevel: 1,
+    currentLevel: 0,
     effect: function () {
       player.activeUpgrades.doubleShot = true;
       closeMenu();
@@ -359,29 +377,57 @@ upgrades = {
   speedUpgrade: {
     name: "Speed upgrade",
     disc: "increase your speed",
+    maxLevel: 2,
+    currentLevel: 0,
     effect: function () {
       player.speed += 1;
       closeMenu();
       player.activeUpgrades.speedUpgrade.level++;
-      if (player.activeUpgrades.speedUpgrade.level == 2)
+      if (
+        upgrades.speedUpgrade.currentLevel >= upgrades.speedUpgrade.maxLevel
+      ) {
         delete upgrades.speedUpgrade;
+      }
+    },
+  },
+  EXPmultiplier: {
+    name: "EXP multiplier",
+    disc: "increase the amount of exp you get",
+    maxLevel: 3,
+    currentLevel: 0,
+    effect: function () {
+      player.activeUpgrades.EXPmultiplier.active = true;
+      player.activeUpgrades.EXPmultiplier.level++;
+      upgrades.EXPmultiplier.currentLevel++;
+      closeMenu();
+      if (
+        upgrades.EXPmultiplier.currentLevel >= upgrades.EXPmultiplier.maxLevel
+      ) {
+        delete upgrades.EXPmultiplier;
+      }
     },
   },
   bulletSpeed: {
     name: "Bullet speed",
     disc: "increase the speed of your bullets",
+    maxLevel: 3,
+    currentLevel: 0,
     effect: function () {
       player.activeUpgrades.bulletSpeed.active = true;
       player.activeUpgrades.bulletSpeed.level++;
       closeMenu();
-      if (player.activeUpgrades.bulletSpeed.level >= 3)
+      if (upgrades.bulletSpeed.currentLevel >= upgrades.bulletSpeed.maxLevel) {
         delete upgrades.bulletSpeed;
+      }
+      if (upgrades.bulletSpeedDecrease) delete upgrades.bulletSpeedDecrease;
     },
   },
   // has sub upgrades
   shotgun: {
     name: "Shotgun",
     disc: "shoot multiple bullets at once",
+    maxLevel: 1,
+    currentLevel: 0,
     effect: function () {
       player.activeUpgrades.shotgun.active = true;
       closeMenu();
@@ -390,10 +436,16 @@ upgrades = {
       (upgrades.shotgunSpreadIncrease = {
         name: "spread increase",
         disc: "increase the spread of the shotgun",
+        maxLevel: 3,
+        currentLevel: 0,
         effect: function () {
           player.activeUpgrades.shotgun.spread += 0.5;
           closeMenu();
-          if (player.activeUpgrades.shotgun.spread >= 2) {
+          upgrades.shotgunSpreadIncrease.currentLevel++;
+          if (
+            upgrades.shotgunSpreadIncrease.currentLevel >=
+            upgrades.shotgunSpreadIncrease.maxLevel
+          ) {
             delete upgrades.shotgunSpreadIncrease;
           }
           if (upgrades.shotgunSpreadDecrease)
@@ -403,12 +455,17 @@ upgrades = {
         (upgrades.shotgunSpreadDecrease = {
           name: "spread decrease",
           disc: "decrease the spread of the shotgun",
+          maxLevel: 3,
+          currentLevel: 0,
           effect: function () {
-            console.log(player.activeUpgrades.shotgun.spread);
+            upgrades.shotgunSpreadDecrease.currentLevel++;
+
             player.activeUpgrades.shotgun.spread -= 0.1;
-            console.log(player.activeUpgrades.shotgun.spread);
             closeMenu();
-            if (player.activeUpgrades.shotgun.spread <= 0.3) {
+            if (
+              upgrades.shotgunSpreadDecrease.maxLevel >=
+              upgrades.shotgun.shotgunSpreadDecrease.currentLevel
+            ) {
               delete upgrades.shotgunSpreadDecrease;
             }
             if (upgrades.shotgunSpreadIncrease)
@@ -419,12 +476,17 @@ upgrades = {
   },
   cannon: {
     name: "Cannon",
-    disc: "shoot a big bullet",
+    disc: "increase the size of your bullets",
+    maxLevel: 3,
+    currentlevel: 0,
     effect: function () {
       player.activeUpgrades.cannon.active = true;
       player.activeUpgrades.cannon.level++;
+      upgrades.cannon.currentLevel++;
       closeMenu();
-      if (player.activeUpgrades.cannon.level == 3) delete upgrades.cannon;
+      if (upgrades.cannon.maxLevel >= upgrades.cannon.currentLevel) {
+        delete upgrades.cannon;
+      }
     },
   },
 };
@@ -757,19 +819,18 @@ function update() {
   player.bullets.forEach((bullet) => {
     enemies.forEach((enemy) => {
       if (
-        // bullet.posX >= enemy.posX &&
-        // bullet.posX <= enemy.posX + enemy.width &&
-        // bullet.posY >= enemy.posY &&
-        // bullet.posY <= enemy.posY + enemy.height
         bullet.posX <= enemy.posX + enemy.width &&
         bullet.posX + bullet.width >= enemy.posX &&
         bullet.posY <= enemy.posY + enemy.height &&
         bullet.posY + bullet.height >= enemy.posY
       ) {
         enemies.splice(enemies.indexOf(enemy), 1);
+
         player.bullets.splice(player.bullets.indexOf(bullet), 1);
+
         const expBar = document.getElementById("expBar");
-        expBar.value = expBar.value + enemy.expValue;
+        expBar.value += enemy.expValue * (player.activeUpgrades.EXPmultiplier.level + 1);
+
         if (expBar.value == expBar.max) {
           player.level++;
           document.getElementById("level").innerText = player.level;
@@ -817,7 +878,9 @@ function ChooseUpgrade() {
     let randomUpgrade = chooseRandomUpgrade();
     upgrade[0].innerText = upgrades[randomUpgrade].name;
     upgrade[1].innerText = upgrades[randomUpgrade].disc;
-    upgrade[2].onclick = upgrades[randomUpgrade].effect; // Assign the function reference to onclick
+    upgrade[2].innerText = `Max level: ${upgrades[randomUpgrade].maxLevel}`;
+    upgrade[3].innerText = `Level: ${upgrades[randomUpgrade].currentLevel}`;
+    upgrade[4].onclick = upgrades[randomUpgrade].effect; // Assign the function reference to onclick
   }
 
   function chooseRandomUpgrade() {
