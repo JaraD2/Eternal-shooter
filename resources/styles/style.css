@@ -105,7 +105,7 @@ progress::-moz-progress-bar {
   top: 0;
   left: 0;
   display: none;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr 1fr;
   width: 100dvw;
   height: 100dvh;
   background-color: rgba(0, 0, 0, 0.5);
