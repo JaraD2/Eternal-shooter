@@ -32,39 +32,28 @@
 ```html
 <progress min="0" max="100" id="expBar"></progress>
 ```
-
-# In progress
-
-- ADD larger map and following camera ? HELP
-
-- particles (maybe save for later to get a working prototype) instead maybe do css effects
-- Health that goes down on collision with bullets FROM the player to avoid future conflict with the boss monster
-
-- ADD reloading - 1h?
 - ADD upgrades and exp - 4h depends on how much i add
   1. shotgun upgrade - maybe complicated
   2. Fire rate upgrade
   3. Reload rate upgrade
   4. exp modifier
   5. extra gun that shoots behind you - maybe complicated
+
+# In progress
+
+- ADD larger map and following camera ?
+- particles (maybe save for later to get a working prototype) instead maybe do css effects
+- ADD reloading - 1h?
+
 - ## ADD boss monster - 5h
   1. make it shoot bullets
-- ### REVIEW
-
-- SHOULD ADD sprites - 6h
-
-  1. player
-  2. gun
-  3. enemy
   4. boss monster
 
 - POSIBLE ADD randomly generate obstacles - ?
   1. perlin noise
   2. just use Math.Random
 - Cutscenes
-  - make a check for movement disabeld
-- On Death
-  1. Display statistics
-  2. just use a card
-- Cookies
-  1. sessionStorage
+  - disable movement
+  - 
+
+
