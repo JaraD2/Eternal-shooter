@@ -937,9 +937,14 @@ document.addEventListener("keydown", function (e) {
     // Reset the game
     location.reload();
   }
+  if (e.key === " ") {
+    player.firing = true;
+
+  }
 });
 document.addEventListener("keyup", function (e) {
   player.keys[e.key.toLowerCase()] = false;
+  if (e.key === " ") player.firing = false;
 });
 var lastMouseX = 0;
 var lastMouseY = 0;
